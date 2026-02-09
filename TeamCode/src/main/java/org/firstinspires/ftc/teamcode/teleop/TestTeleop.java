@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.opencv.core.Mat;
 
@@ -18,6 +19,10 @@ import dev.nextftc.hardware.positionable.SetPosition;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import static dev.nextftc.ftc.Gamepads.*;
+
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
+
 public class TestTeleop extends NextFTCOpMode {
 	ControlSystem flywheelControl = ControlSystem.builder()
 			.velPid(0.002, 0.00052, 0.0)
@@ -34,11 +39,13 @@ public class TestTeleop extends NextFTCOpMode {
 	MotorEx turret = new MotorEx("tu");
 	ServoEx gate = new ServoEx("ga");
 	ServoEx angler = new ServoEx("an");
+	AnalogInput potentiometer = hardwareMap.get(AnalogInput.class, "pot");
 
 	@Override
 	public void onInit() {
 		flywheelControl.setGoal(new KineticState(0, 0));
 		addComponents(
+				TelemetryComponent.INSTANCE,
 				new LoopTimeComponent(),
 				new PedroComponent(Constants::createFollower),
 				BindingsComponent.INSTANCE,
@@ -76,6 +83,8 @@ public class TestTeleop extends NextFTCOpMode {
 		gamepad1().dpadDown().whenTrue(() -> targetVelocity -= 25);
 		turret.setPower(turretControl.calculate(turret.getState()));
 
-
+		telemetry.addData("Flywheel Velocity", flywheel.getVelocity());
+		telemetry.addData("Turret Angle", turret.getCurrentPosition());
+		telemetry.addData("Potentiometer", potentiometer.getVoltage());
 	}
 }
