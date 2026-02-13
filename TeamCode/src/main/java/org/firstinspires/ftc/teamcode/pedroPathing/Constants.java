@@ -17,14 +17,19 @@ public class Constants {
 			.rightRearMotorName("br")
 			.rightFrontMotorName("fr")
 			.leftRearMotorName("bl")
+			.leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
 			.leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-			.leftRearMotorDirection(DcMotorSimple.Direction.REVERSE);
+			.rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+			.rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
-				.driveEncoderLocalizer(new DriveEncoderConstants())
+				.driveEncoderLocalizer(new DriveEncoderConstants().leftFrontMotorName("fl")
+						.rightRearMotorName("br")
+						.rightFrontMotorName("fr")
+						.leftRearMotorName("bl"))
 				.mecanumDrivetrain(driveConstants)
                 .pathConstraints(pathConstraints)
                 .build();
