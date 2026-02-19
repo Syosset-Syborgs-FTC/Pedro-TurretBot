@@ -76,11 +76,11 @@ public class Shooter implements Subsystem {
 	}
 	public void updateIntakeTransfer() {
 		if (shooting) {
-			intake.setPower(1);
-			gate.setPosition(0.4);
+			intake.setPower(0.95);
+			gate.setPosition(0);
 		} else {
 			intake.setPower(intakeState);
-			gate.setPosition(0);
+			gate.setPosition(0.85);
 		}
 
 		Telemetry telemetry = ActiveOpMode.telemetry();

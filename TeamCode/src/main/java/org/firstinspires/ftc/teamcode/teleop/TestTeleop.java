@@ -14,21 +14,22 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.ftc.components.LoopTimeComponent;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
-import dev.nextftc.hardware.positionable.SetPosition;
-
+import com.photon.photoncore.PhotonCore;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import static dev.nextftc.ftc.Gamepads.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import dev.nextftc.control.feedback.PIDCoefficients;
 //@Disabled
 @TeleOp
+@Configurable
 public class TestTeleop extends NextFTCOpMode {
+	public static PIDCoefficients pidCoefficients = new PIDCoefficients(0.3, 0.00000000, 0.000001);
 	ControlSystem turretControl = ControlSystem.builder()
-			.posPid(0.01, 0.0001, 0.001)
+			.posPid(pidCoefficients)
 			.build();
 	double targetVelocity = 1350;
 	boolean flywheelEnabled = false;
@@ -49,6 +50,7 @@ public class TestTeleop extends NextFTCOpMode {
 
 	@Override
 	public void onInit() {
+		PhotonCore.enable();
 		turretControl.setGoal(new KineticState());
 		Shooter.INSTANCE.setTargetVelocity(0);
 		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
@@ -69,8 +71,8 @@ public class TestTeleop extends NextFTCOpMode {
 		gamepad1().leftTrigger().atLeast(0.5).whenBecomesTrue(() -> flywheelEnabled = !flywheelEnabled);
 		gamepad1().rightTrigger().atLeast(0.5).whenBecomesTrue(() -> Shooter.INSTANCE.setShooting(true)).whenBecomesFalse(() -> Shooter.INSTANCE.setShooting(false));
 
-		gamepad1().dpadLeft().whenBecomesTrue(() -> turretAngle -= Math.toRadians(10));
-		gamepad1().dpadRight().whenBecomesTrue(() -> turretAngle += Math.toRadians(10));
+		gamepad1().dpadLeft().whenBecomesTrue(() -> turretAngle -= Math.toRadians(360));
+		gamepad1().dpadRight().whenBecomesTrue(() -> turretAngle += Math.toRadians(360));
 
 		gamepad1().b().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.5 : 1);
 
@@ -84,13 +86,15 @@ public class TestTeleop extends NextFTCOpMode {
 	public void onUpdate() {
 		follower().setTeleOpDrive( -gamepad1.left_stick_y * driveSpeedMultiplier, -gamepad1.left_stick_x * driveSpeedMultiplier, -gamepad1.right_stick_x * driveSpeedMultiplier, true);
 		Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
-		turretControl.setGoal(new KineticState(turretAngle/(2*Math.PI)*5*28));
-		turret.setPower(turretControl.calculate(turret.getState()));
+		turretControl.setGoal(new KineticState(turretAngle));
+		double turretPower = turretControl.calculate(turret.getState().times(3.88*2*Math.PI/537.7));
+		telemetry.addData("Turret Power", turretPower);
+		turret.setPower(turretPower);
 		telemetry.addData("Shooting", shootOverride);
 		telemetry.addData("Intake State", intakeState);
 		telemetry.addData("Target Velocity", targetVelocity);
-		telemetry.addData("Target Angle", turretAngle/(2*Math.PI)*5);
-		telemetry.addData("Turret Angle", turret.getCurrentPosition());
+		telemetry.addData("Target Angle", turretAngle);
+		telemetry.addData("Turret Angle", turret.getCurrentPosition()*3.88/537.7*2*Math.PI);
 		telemetry.addData("Potentiometer", potentiometer.getVoltage());
 	}
 }
