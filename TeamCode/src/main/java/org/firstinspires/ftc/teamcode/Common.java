@@ -35,7 +35,6 @@ public class Common {
 		}
 	}
 	public static Alliance alliance = Alliance.Red;
-	public static Telemetry telemetry = null;
 	public static Pose applyTransform(Pose base, Pose offset) {
 		Pose rotatedOffset = offset.rotate(base.getHeading(), false);
 

@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
 import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.localizer.LimeLightAprilTag;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
+import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.ftc.components.LoopTimeComponent;
-import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import com.photon.photoncore.PhotonCore;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
@@ -21,37 +21,30 @@ import static dev.nextftc.ftc.Gamepads.*;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import dev.nextftc.control.feedback.PIDCoefficients;
+
 //@Disabled
 @TeleOp
 @Configurable
 public class TestTeleop extends NextFTCOpMode {
-	public static PIDCoefficients pidCoefficients = new PIDCoefficients(0.3, 0.00000000, 0.000001);
-	ControlSystem turretControl = ControlSystem.builder()
-			.posPid(pidCoefficients)
-			.build();
 	double targetVelocity = 1350;
 	boolean flywheelEnabled = false;
-	double turretAngle = 0;
 	ServoEx angler = new ServoEx("an");
 	AnalogInput potentiometer;
-	MotorEx turret = new MotorEx("tu");
 	public TestTeleop() {
 		addComponents(
 				TelemetryComponent.INSTANCE,
 				new LoopTimeComponent(),
 				new PedroComponent(Constants::createFollower),
 				BindingsComponent.INSTANCE,
+				PanelsPacketComponent.INSTANCE,
 				BulkReadComponent.INSTANCE,
-				new SubsystemComponent(Shooter.INSTANCE)
+				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE)
 		);
 	}
 
 	@Override
 	public void onInit() {
 		PhotonCore.enable();
-		turretControl.setGoal(new KineticState());
 		Shooter.INSTANCE.setTargetVelocity(0);
 		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
 	}
@@ -60,10 +53,8 @@ public class TestTeleop extends NextFTCOpMode {
 
 	@Override
 	public void onStartButtonPressed() {
-		turretAngle = 0;
-		turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		turret.zero();
 		follower().startTeleopDrive(true);
+		gamepad1().options().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.followingAprilTag = !TurretAngleControl.INSTANCE.followingAprilTag);
 
 		gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
 		gamepad1().leftBumper().whenBecomesTrue(Shooter.INSTANCE::toggleOuttake);
@@ -71,8 +62,8 @@ public class TestTeleop extends NextFTCOpMode {
 		gamepad1().leftTrigger().atLeast(0.5).whenBecomesTrue(() -> flywheelEnabled = !flywheelEnabled);
 		gamepad1().rightTrigger().atLeast(0.5).whenBecomesTrue(() -> Shooter.INSTANCE.setShooting(true)).whenBecomesFalse(() -> Shooter.INSTANCE.setShooting(false));
 
-		gamepad1().dpadLeft().whenBecomesTrue(() -> turretAngle -= Math.toRadians(360));
-		gamepad1().dpadRight().whenBecomesTrue(() -> turretAngle += Math.toRadians(360));
+		gamepad1().dpadLeft().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle - Math.toRadians(90)));
+		gamepad1().dpadRight().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle + Math.toRadians(90)));
 
 		gamepad1().b().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.5 : 1);
 
@@ -86,15 +77,13 @@ public class TestTeleop extends NextFTCOpMode {
 	public void onUpdate() {
 		follower().setTeleOpDrive( -gamepad1.left_stick_y * driveSpeedMultiplier, -gamepad1.left_stick_x * driveSpeedMultiplier, -gamepad1.right_stick_x * driveSpeedMultiplier, true);
 		Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
-		turretControl.setGoal(new KineticState(turretAngle));
-		double turretPower = turretControl.calculate(turret.getState().times(3.88*2*Math.PI/537.7));
-		telemetry.addData("Turret Power", turretPower);
-		turret.setPower(turretPower);
+
 		telemetry.addData("Shooting", shootOverride);
 		telemetry.addData("Intake State", intakeState);
 		telemetry.addData("Target Velocity", targetVelocity);
-		telemetry.addData("Target Angle", turretAngle);
-		telemetry.addData("Turret Angle", turret.getCurrentPosition()*3.88/537.7*2*Math.PI);
 		telemetry.addData("Potentiometer", potentiometer.getVoltage());
+	}
+	public void onStop() {
+		LimeLightAprilTag.INSTANCE.stop();
 	}
 }

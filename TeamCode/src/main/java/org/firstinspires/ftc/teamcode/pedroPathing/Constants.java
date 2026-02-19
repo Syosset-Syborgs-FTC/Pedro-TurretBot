@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 
 public class Constants {
 	public static FollowerConstants followerConstants = new FollowerConstants().mass(12.7);
@@ -34,8 +35,9 @@ public class Constants {
 
 
 	public static Follower createFollower(HardwareMap hardwareMap) {
+		SensorFusion.INSTANCE.init(hardwareMap, pinpointConstants);
 		return new FollowerBuilder(followerConstants, hardwareMap)
-				.pinpointLocalizer(pinpointConstants)
+				.setLocalizer(SensorFusion.INSTANCE)
 				.mecanumDrivetrain(driveConstants)
 				.pathConstraints(pathConstraints)
 				.build();
