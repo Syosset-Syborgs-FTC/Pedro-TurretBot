@@ -71,25 +71,38 @@ public class LimeLightAprilTag implements Subsystem {
 		limelight.stop();
 	}
 
-	public Optional<Pair<Pose, Long>> localizeRobotMT2() {
+	public Optional<VisionResult> localizeRobotMT2() {
 		LLResult result = limelight.getLatestResult();
 		if (result.isValid()) {
-			return Optional.of(Pair.create((flattenPose3DTo2d(result.getBotpose_MT2())), result.getControlHubTimeStampNanos()));
+			return Optional.of(new VisionResult(flattenPose3DTo2d(result.getBotpose_MT2()), result.getControlHubTimeStampNanos(), result.getTimestamp()));
 		}
 		return Optional.empty();
 	}
 
-	public Optional<Pair<Pose, Long>> localizeRobotMT1() {
+	public Optional<VisionResult> localizeRobotMT1() {
 		LLResult result = limelight.getLatestResult();
 		if (result.isValid()) {
 			Pose3D pose = result.getBotpose();
+			ActiveOpMode.telemetry().addData("z", pose.getPosition().z);
+			if (Math.abs(pose.getPosition().z) > 0.1) return Optional.empty();
 			ActiveOpMode.telemetry().addData("MT1 std dev", Arrays.toString(result.getStddevMt1()));
-			return Optional.of(Pair.create((flattenPose3DTo2d(pose)), result.getControlHubTimeStampNanos()));
+			return Optional.of(new VisionResult(flattenPose3DTo2d(pose), result.getControlHubTimeStampNanos(), result.getTimestamp()));
 		}
 		return Optional.empty();
 	}
 
 	public void updateRobotOrientation(double heading) {
 		limelight.updateRobotOrientation(Math.toDegrees(heading));
+	}
+	public static class VisionResult {
+		public Pose pose;
+		public long timestamp;
+		public double llTimestamp;
+
+		public VisionResult(Pose pose, long timestamp, double llTimestamp) {
+			this.pose = pose;
+			this.timestamp = timestamp;
+			this.llTimestamp = llTimestamp;
+		}
 	}
 }

@@ -71,15 +71,15 @@ public class SensorFusion implements Localizer {
 	public void update() {
 		pinpointLocalizer.update();
 		filter.updateOdometry(pinpointLocalizer.getPose(), System.nanoTime());
-		Optional<Pair<Pose, Long>> mt1Result = LimeLightAprilTag.INSTANCE
+		Optional<LimeLightAprilTag.VisionResult> mt1Result = LimeLightAprilTag.INSTANCE
 				.localizeRobotMT1();
 		mt1Result
 				.ifPresent(pair -> {
-					cachedCameraPose = Optional.of(pair.first);
-					filter.updateVision(LimeLightAprilTag.INSTANCE.calculateRobotPoseFromCameraPose(pair.first), pair.second);
+					cachedCameraPose = Optional.of(pair.pose);
+					filter.updateVision(LimeLightAprilTag.INSTANCE.calculateRobotPoseFromCameraPose(pair.pose), pair.timestamp, pair.llTimestamp);
 				});
-		cachedMT1Pose = mt1Result.map(p -> p.first);
-		cachedMT2Pose = LimeLightAprilTag.INSTANCE.localizeRobotMT2().map(p -> p.first);
+		cachedMT1Pose = mt1Result.map(p -> p.pose);
+		cachedMT2Pose = LimeLightAprilTag.INSTANCE.localizeRobotMT2().map(p -> p.pose);
 		LimeLightAprilTag.INSTANCE.updateRobotOrientation(filter.getPose(pinpointLocalizer.getPose()).getHeading());
 	}
 

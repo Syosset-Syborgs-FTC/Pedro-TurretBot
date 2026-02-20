@@ -67,7 +67,12 @@ public class PoseFilter {
 		this.covY = R_POS;
 		this.covH = R_HEAD;
 	}
-	public void updateVision(Pose visionPose, long timestampNs) {
+	double pastVisionTimestamp = 0;
+	public void updateVision(Pose visionPose, long timestampNs, double llTs) {
+		if (llTs == pastVisionTimestamp) {
+			return;
+		}
+		pastVisionTimestamp = llTs;
 		Pose rawPoseAtTime = getInterpolatedHistory(timestampNs);
 
 		// assume 0 if history is missing
