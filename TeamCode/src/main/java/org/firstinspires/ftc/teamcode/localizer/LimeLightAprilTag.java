@@ -6,6 +6,7 @@ import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.Common;
+import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import dev.nextftc.ftc.ActiveOpMode;
 
 public class LimeLightAprilTag implements Subsystem {
 	public static final LimeLightAprilTag INSTANCE = new LimeLightAprilTag();
+	public static double MAX_CAMERA_OMEGA_DEG_PER_SEC = 60.0;
 	Limelight3A limelight;
 
 	public void initialize() {
@@ -80,12 +83,26 @@ public class LimeLightAprilTag implements Subsystem {
 	}
 
 	public Optional<VisionResult> localizeRobotMT1() {
+		double robotOmega = SensorFusion.INSTANCE.getVelocity().getHeading();
+		double turretOmega = TurretAngleControl.INSTANCE.turret.getState().getVelocity() * TurretAngleControl.INSTANCE.scalar;
+		double totalCameraOmega = Math.abs(robotOmega - turretOmega);
+
 		LLResult result = limelight.getLatestResult();
 		if (result.isValid()) {
+			boolean hasGoalTags = false;
+			for (FiducialResult fiducial: result.getFiducialResults()) {
+				int id = fiducial.getFiducialId();
+				if (id == 20 || id == 24) {
+					hasGoalTags = true;
+					break;
+				}
+			}
+			ActiveOpMode.telemetry().addData("omega", totalCameraOmega);
+			if (!hasGoalTags || totalCameraOmega > Math.toRadians(MAX_CAMERA_OMEGA_DEG_PER_SEC)) return Optional.empty();
 			Pose3D pose = result.getBotpose();
 			ActiveOpMode.telemetry().addData("z", pose.getPosition().z);
-			if (Math.abs(pose.getPosition().z) > 0.1) return Optional.empty();
 			ActiveOpMode.telemetry().addData("MT1 std dev", Arrays.toString(result.getStddevMt1()));
+			if (pose.getPosition().z > 0.1) return Optional.empty();
 			return Optional.of(new VisionResult(flattenPose3DTo2d(pose), result.getControlHubTimeStampNanos(), result.getTimestamp()));
 		}
 		return Optional.empty();

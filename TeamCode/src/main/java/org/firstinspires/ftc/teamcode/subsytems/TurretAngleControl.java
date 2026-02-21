@@ -6,33 +6,41 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Drawing;
+import org.firstinspires.ftc.teamcode.Common;
+import org.firstinspires.ftc.teamcode.control.TrapezoidalInterpolator;
+import org.firstinspires.ftc.teamcode.control.TurretVelocityCompensator;
 import org.firstinspires.ftc.teamcode.localizer.LimeLightAprilTag;
 import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
-import dev.nextftc.control.interpolators.FirstOrderEMAParameters;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
+
 @Configurable
 public class TurretAngleControl implements Subsystem {
 	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.03);
-	public static FirstOrderEMAParameters emaParameters = new FirstOrderEMAParameters(0.3);
-	public static final TurretAngleControl INSTANCE = new TurretAngleControl();
-	AnalogInput potentiometer;
-	MotorEx turret = new MotorEx("tu", 0.001).reversed();
+	// profile constraints
+	public static double MAX_VEL = (312.0 / 4.0 / 60.0) * 2.0 * Math.PI;
+	public static double MAX_ACCEL = MAX_VEL * 100; // reach max speed in 0.4s
 
+	public static final TurretAngleControl INSTANCE = new TurretAngleControl();
+
+	AnalogInput potentiometer;
+	public MotorEx turret = new MotorEx("tu", 0.001).reversed();
 	ServoEx angler = new ServoEx("an");
+
 	public boolean followingAprilTag = false;
 	public double turretTargetAngle = 0;
+	public double scalar = 1.0 / 537.7 * Math.PI * (30.0 / 120.0) * 2.0;
 
 	ControlSystem turretControl = ControlSystem.builder()
 			.posPid(pidCoefficients)
-			.emaInterpolator(emaParameters)
+			.interpolator(new TrapezoidalInterpolator(MAX_VEL, MAX_ACCEL))
+			.feedforward(TurretVelocityCompensator.INSTANCE)
 			.build();
 
 	@Override
@@ -42,7 +50,6 @@ public class TurretAngleControl implements Subsystem {
 		turret.zero();
 		turretControl.setGoal(new KineticState());
 		angler.setPosition(0);
-//		turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		potentiometer = ActiveOpMode.hardwareMap().get(AnalogInput.class, "pot");
 		LimeLightAprilTag.INSTANCE.initialize();
 	}
@@ -51,36 +58,42 @@ public class TurretAngleControl implements Subsystem {
 	public void periodic() {
 		Telemetry telemetry = ActiveOpMode.telemetry();
 		telemetry.addData("Angler Position", angler.getPosition());
-		telemetry.addData("pot voltage", potentiometer.getVoltage());
-		turretControl.setGoal(new KineticState(turretTargetAngle));
-		// output shaft counts / 537.7 -> output shaft revs / 1.295 ->
-		double scalar = 1 / 537.7 * Math.PI * 30 / 120 * 2;
-		double turretPower = turretControl.calculate(turret.getState().times(scalar));
-		telemetry.addData("Turret Power", turretPower);
-		double turretAngle = turret.getCurrentPosition() * scalar;
-		LimeLightAprilTag.INSTANCE.setTurretAngle(turretAngle);
-		LimeLightAprilTag.INSTANCE.periodic();
+//		telemetry.addData("pot voltage", potentiometer.getVoltage());
 
+		turretControl.setGoal(new KineticState(turretTargetAngle));
+		double turretPower = turretControl.calculate(turret.getState().times(scalar));
+
+		double actualTurretAngle = getActualTurretAngle();
+		LimeLightAprilTag.INSTANCE.setTurretAngle(actualTurretAngle);
+		LimeLightAprilTag.INSTANCE.periodic();
+		if (ActiveOpMode.opModeInInit()) return;
 		turret.setPower(turretPower);
 
 		Vector alignTarget = new Vector();
-		alignTarget.setOrthogonalComponents(-72, 72);
+		alignTarget.setOrthogonalComponents(-72, Common.alliance == Common.Alliance.Red ? 72 : -72);
+
 		if (followingAprilTag) {
 			double robotHeading = SensorFusion.INSTANCE.getPose().getHeading();
 			setTurretAngle(robotHeading - alignTarget.minus(SensorFusion.INSTANCE.getPose().getAsVector()).getTheta());
 		}
-		telemetry.addData("Target Angle", Math.toDegrees(turretTargetAngle));
-		telemetry.addData("Interpolated Target", Math.toDegrees(turretControl.getGoal().getPosition()));
-		telemetry.addData("Turret Angle", Math.toDegrees(turretTargetAngle));
-		telemetry.addData("Following apriltag", followingAprilTag);
+		telemetry.addData("Turret Target Angle", Math.toDegrees(turretTargetAngle));
+		telemetry.addData("Turret Profile Position", Math.toDegrees(turretControl.getReference().getPosition()));
+		telemetry.addData("Turret Actual Angle", Math.toDegrees(actualTurretAngle));
+		telemetry.addData("Turret Power", turretPower);
 	}
-	public double getTurretAngle() {
-		return turretTargetAngle;
+
+	public double getActualTurretAngle() {
+		return turret.getCurrentPosition() * scalar;
 	}
+
+	public void setAnglerPosition(double pos) { angler.setPosition(pos); }
+	public void offsetAnglerPosition(double pos) { setAnglerPosition(getAnglerPosition() + pos); }
+	public double getAnglerPosition() { return angler.getPosition(); }
+	public double getTurretAngle() { return turretTargetAngle; }
+
 	public void setTurretAngle(double angle) {
 		angle = wrapAngle(angle);
 		this.turretTargetAngle = angle;
-		turretControl.setGoal(new KineticState(angle, 0));
 	}
 	public static double wrapAngle(double angleRadians) {
 		double min = Math.toRadians(-215);

@@ -44,6 +44,7 @@ public class Shooter implements Subsystem {
 	public void initialize() {
 		voltage = ActiveOpMode.hardwareMap().voltageSensor.get("Expansion Hub 2");
 		shooting = false;
+		intakeState = 0;
 		targetVelocity = 0;
 		flywheel.zero();
 		flywheel.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -60,13 +61,17 @@ public class Shooter implements Subsystem {
 		rgbLight.setPosition(0);
 		flywheel.setPower(0.02);
 		flywheel.setPower(0);
+		controller.reset();
 	}
+
 	public void setIntakeState(int state) {
 		this.intakeState = state;
 	}
+
 	public void toggleIntake() {
 		setIntakeState(this.intakeState == 1 ? 0 : 1);
 	}
+
 	public void toggleOuttake() {
 		setIntakeState(this.intakeState == -1 ? 0 : -1);
 	}
@@ -74,9 +79,11 @@ public class Shooter implements Subsystem {
 	VoltageSensor voltage;
 	private double cachedVoltage = 12.0;
 	double loopCount = 0;
+
 	public void setTargetVelocity(double velocity) {
 		this.targetVelocity = velocity;
 	}
+
 	private void updateRGB() {
 		if (targetVelocity == 0) {
 			rgbLight.setPosition(0.28); // red
@@ -140,7 +147,8 @@ public class Shooter implements Subsystem {
 		controller.setTarget(targetVelocity);
 
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
-		if (!ActiveOpMode.opModeInInit()) flywheel.setPower(power);
+		if (ActiveOpMode.opModeInInit()) return;
+		flywheel.setPower(power);
 
 		Telemetry telemetry = ActiveOpMode.telemetry();
 		if (flywheel.getMotor().isOverCurrent()) {

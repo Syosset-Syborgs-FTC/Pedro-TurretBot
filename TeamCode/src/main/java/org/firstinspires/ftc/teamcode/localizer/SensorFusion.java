@@ -9,8 +9,13 @@ import com.pedropathing.localization.Localizer;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import java.util.Objects;
 import java.util.Optional;
+
+import dev.nextftc.ftc.ActiveOpMode;
 
 public class SensorFusion implements Localizer {
 	public static SensorFusion INSTANCE = new SensorFusion();
@@ -65,7 +70,6 @@ public class SensorFusion implements Localizer {
 		filter.setPose(pinpointLocalizer.getPose(), setPose);
 	}
 
-//	ElapsedTime orientationTimer = new ElapsedTime();
 
 	@Override
 	public void update() {
@@ -73,6 +77,7 @@ public class SensorFusion implements Localizer {
 		filter.updateOdometry(pinpointLocalizer.getPose(), System.nanoTime());
 		Optional<LimeLightAprilTag.VisionResult> mt1Result = LimeLightAprilTag.INSTANCE
 				.localizeRobotMT1();
+		ActiveOpMode.telemetry().addData("updated", true);
 		mt1Result
 				.ifPresent(pair -> {
 					cachedCameraPose = Optional.of(pair.pose);

@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import dev.nextftc.ftc.ActiveOpMode;
+
 public class PoseFilter {
 
 	private final NavigableMap<Long, Pose> odomHistory = new TreeMap<>();
@@ -69,6 +71,8 @@ public class PoseFilter {
 	}
 	double pastVisionTimestamp = 0;
 	public void updateVision(Pose visionPose, long timestampNs, double llTs) {
+		ActiveOpMode.telemetry().addData("llts", llTs);
+		ActiveOpMode.telemetry().addData("past ts", pastVisionTimestamp);
 		if (llTs == pastVisionTimestamp) {
 			return;
 		}
@@ -92,8 +96,8 @@ public class PoseFilter {
 		double headingError = Math.abs(getSmallestAngleDifference(estimatedPoseAtTime.getHeading(), visionPose.getHeading()));
 
 		boolean isSuspicious = (distError > GATE_DISTANCE) || (headingError > GATE_HEADING);
-
-		if (isSuspicious) {
+		ActiveOpMode.telemetry().addData("suspicious reads", suspiciousReadingCounter);
+		if (false) {
 			suspiciousReadingCounter++;
 			if (suspiciousReadingCounter > OUTLIER_COUNT) {
 				// reset filter if too many bad readings in a row
