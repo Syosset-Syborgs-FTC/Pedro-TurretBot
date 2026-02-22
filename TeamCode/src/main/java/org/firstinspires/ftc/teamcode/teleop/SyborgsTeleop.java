@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import static dev.nextftc.ftc.Gamepads.gamepad1;
 
+import static dev.nextftc.ftc.Gamepads.gamepad2;
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.photon.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,6 +15,8 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
 import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
+import org.firstinspires.ftc.teamcode.control.ShooterInterpolator.ShooterState;
+import org.firstinspires.ftc.teamcode.control.ShooterInterpolator;
 import org.firstinspires.ftc.teamcode.localizer.LimeLightAprilTag;
 import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -31,7 +36,7 @@ import dev.nextftc.ftc.components.LoopTimeComponent;
 public class SyborgsTeleop extends NextFTCOpMode {
 	double targetVelocity = 2050;
 	boolean flywheelEnabled = false;
-	AnalogInput potentiometer;
+//	AnalogInput potentiometer;
 	public SyborgsTeleop() {
 		addComponents(
 				TelemetryComponent.INSTANCE,
@@ -43,12 +48,15 @@ public class SyborgsTeleop extends NextFTCOpMode {
 				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE)
 		);
 	}
-
+	boolean autoPowerAngle = false;
 	@Override
 	public void onInit() {
+		headingOffset = 0;
+		autoPowerAngle = false;
+		flywheelEnabled = false;
 		PhotonCore.enable();
 		Shooter.INSTANCE.setTargetVelocity(0);
-		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
+//		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
 
 		gamepad1().rightBumper()
 				.whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
@@ -62,7 +70,6 @@ public class SyborgsTeleop extends NextFTCOpMode {
 	public void onStartButtonPressed() {
 		gamepad1().rightBumper().clear$bindings();
 		follower().startTeleopDrive(true);
-		gamepad1().x().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.followingAprilTag = !TurretAngleControl.INSTANCE.followingAprilTag);
 		gamepad1().options().whenBecomesTrue(() -> headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading());
 		gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
 		gamepad1().leftBumper().whenBecomesTrue(Shooter.INSTANCE::toggleOuttake);
@@ -70,15 +77,17 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		gamepad1().leftTrigger().atLeast(0.5).whenBecomesTrue(() -> flywheelEnabled = !flywheelEnabled);
 		gamepad1().rightTrigger().atLeast(0.5).whenBecomesTrue(() -> Shooter.INSTANCE.setShooting(true)).whenBecomesFalse(() -> Shooter.INSTANCE.setShooting(false));
 
+		gamepad1().dpadUp().whenTrue(() -> targetVelocity += 100);
+		gamepad1().dpadDown().whenTrue(() -> targetVelocity -= 100);
 		gamepad1().dpadLeft().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle - Math.toRadians(15)));
 		gamepad1().dpadRight().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle + Math.toRadians(15)));
 
-		gamepad1().b().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.5 : 1);
+		gamepad1().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.followingAprilTag = !TurretAngleControl.INSTANCE.followingAprilTag);
+		gamepad1().a().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.5 : 1);
+		gamepad1().b().whenBecomesTrue(() -> autoPowerAngle = !autoPowerAngle);
 
-		gamepad1().y().whenTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
-		gamepad1().a().whenTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(-0.05));
-		gamepad1().dpadUp().whenTrue(() -> targetVelocity += 25);
-		gamepad1().dpadDown().whenTrue(() -> targetVelocity -= 25);
+		gamepad2().y().whenTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
+		gamepad2().a().whenTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(-0.05));
 	}
 	double driveSpeedMultiplier = 1;
 	Vector drive = new Vector();
@@ -87,7 +96,17 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		drive.setOrthogonalComponents( -gamepad1.left_stick_y * driveSpeedMultiplier, -gamepad1.left_stick_x * driveSpeedMultiplier);
 		drive.rotateVector(-SensorFusion.INSTANCE.getRawPinpointHeading() + headingOffset);
 		follower().setTeleOpDrive(drive.getXComponent(), drive.getYComponent(), -gamepad1.right_stick_x * driveSpeedMultiplier, true);
-		Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
+		if (autoPowerAngle) {
+			Pose currentPose = follower().getPose();
+			if (Common.alliance == Common.Alliance.Blue) {
+				currentPose = currentPose.mirror().getAsCoordinateSystem(InvertedFTCCoordinates.INSTANCE);
+			}
+			ShooterState state = ShooterInterpolator.INSTANCE.getTargetState(currentPose);
+			TurretAngleControl.INSTANCE.setAnglerPosition(state.hoodAngle);
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 0);
+		} else {
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
+		}
 	}
 	public void onStop() {
 		LimeLightAprilTag.INSTANCE.stop();

@@ -5,9 +5,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.photon.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
 import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
@@ -15,37 +13,19 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
-import dev.frozenmilk.sinister.loading.Preload;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.ftc.components.LoopTimeComponent;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 @Autonomous
-public class SyborgsAuton extends NextFTCOpMode {
-
-	public SyborgsAuton() {
-		addComponents(
-				TelemetryComponent.INSTANCE,
-				new LoopTimeComponent(),
-				new PedroComponent(Constants::createFollower),
-				BindingsComponent.INSTANCE,
-				PanelsPacketComponent.INSTANCE,
-				BulkReadComponent.INSTANCE,
-				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE)
-		);
-	}
-	@Override
-	public void onInit() {
-		PhotonCore.enable();
-		Shooter.INSTANCE.setTargetVelocity(0);
-	}
+public class RedFar extends SyborgsAutonBase {
 	@Override
 	public void onStartButtonPressed() {
+		Shooter.INSTANCE.setTargetVelocity(2000);
 		Paths paths = new Paths(follower());
 		new SequentialGroup(new FollowPath(paths.Preload),
 				new FollowPath(paths.GPP),

@@ -25,7 +25,7 @@ public class TurretAngleControl implements Subsystem {
 	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.03);
 	// profile constraints
 	public static double MAX_VEL = (312.0 / 4.0 / 60.0) * 2.0 * Math.PI;
-	public static double MAX_ACCEL = MAX_VEL * 100; // reach max speed in 0.4s
+	public static double MAX_ACCEL = MAX_VEL * 50; // reach max speed in 0.4s
 
 	public static final TurretAngleControl INSTANCE = new TurretAngleControl();
 
@@ -45,9 +45,11 @@ public class TurretAngleControl implements Subsystem {
 
 	@Override
 	public void initialize() {
+		followingAprilTag = false;
 		turretTargetAngle = 0;
 		turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		turret.zero();
+		turretControl.reset();
 		turretControl.setGoal(new KineticState());
 		angler.setPosition(0);
 		potentiometer = ActiveOpMode.hardwareMap().get(AnalogInput.class, "pot");

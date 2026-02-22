@@ -44,8 +44,13 @@ public class Shooter implements Subsystem {
 	public void initialize() {
 		voltage = ActiveOpMode.hardwareMap().voltageSensor.get("Expansion Hub 2");
 		shooting = false;
+		autoAlignIndicator = false;
 		intakeState = 0;
 		targetVelocity = 0;
+		currentVelocity = 0;
+		loopCount = 0;
+		cachedVoltage = 12.0;
+
 		flywheel.zero();
 		flywheel.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		prevEncoderTicks = flywheel.getCurrentPosition();

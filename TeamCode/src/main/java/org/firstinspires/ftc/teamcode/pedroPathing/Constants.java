@@ -56,7 +56,7 @@ public class Constants {
 
 //		PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
 		return new FollowerBuilder(followerConstants, hardwareMap)
-				.setLocalizer(SensorFusion.INSTANCE 	)
+				.setLocalizer(SensorFusion.INSTANCE)
 				.mecanumDrivetrain(driveConstants)
 				.pathConstraints(pathConstraints)
 				.build();

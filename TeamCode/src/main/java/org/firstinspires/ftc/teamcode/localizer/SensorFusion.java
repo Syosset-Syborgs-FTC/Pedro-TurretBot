@@ -31,6 +31,9 @@ public class SensorFusion implements Localizer {
 	public void init(HardwareMap hardwareMap, PinpointConstants pinpointConstants) {
 		pinpointLocalizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
 		filter.updateOdometry(pinpointLocalizer.getPose(), System.nanoTime());
+		cachedMT1Pose = Optional.empty();
+		cachedMT2Pose = Optional.empty();
+		cachedCameraPose = Optional.empty();
 		setStartPose(new Pose());
 		setPose(new Pose());
 	}
