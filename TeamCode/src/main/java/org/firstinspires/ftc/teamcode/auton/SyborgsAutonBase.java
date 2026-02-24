@@ -4,6 +4,7 @@ import com.photon.photoncore.PhotonCore;
 
 import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
 import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
+import org.firstinspires.ftc.teamcode.localizer.LimeLightAprilTag;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
@@ -32,5 +33,8 @@ public class SyborgsAutonBase extends NextFTCOpMode {
 				BulkReadComponent.INSTANCE,
 				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE)
 		);
+	}
+	public void onStop() {
+		LimeLightAprilTag.INSTANCE.stop();
 	}
 }

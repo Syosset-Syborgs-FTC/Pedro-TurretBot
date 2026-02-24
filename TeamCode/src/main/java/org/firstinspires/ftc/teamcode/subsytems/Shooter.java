@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.control.PIDFController;
 
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -112,6 +116,15 @@ public class Shooter implements Subsystem {
 		updateFlywheel();
 		updateRGB();
 		updateIntakeTransfer();
+	}
+
+	public Command shoot() {
+		return new ParallelRaceGroup(
+				new Delay(2),
+				new InstantCommand(() -> setShooting(true))
+		).then(
+				new InstantCommand(() -> setShooting(false))
+		);
 	}
 
 	public void updateIntakeTransfer() {

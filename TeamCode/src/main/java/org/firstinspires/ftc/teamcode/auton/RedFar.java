@@ -27,13 +27,18 @@ public class RedFar extends SyborgsAutonBase {
 	public void onStartButtonPressed() {
 		Shooter.INSTANCE.setTargetVelocity(2000);
 		Paths paths = new Paths(follower());
-		new SequentialGroup(new FollowPath(paths.Preload),
+		new SequentialGroup(
+				new FollowPath(paths.Preload),
+				Shooter.INSTANCE.shoot(),
 				new FollowPath(paths.GPP),
 				new FollowPath(paths.GPPReturn),
+				Shooter.INSTANCE.shoot(),
 				new FollowPath(paths.PGP),
 				new FollowPath(paths.PGPReturn),
+				Shooter.INSTANCE.shoot(),
 				new FollowPath(paths.PPG),
 				new FollowPath(paths.PPGReturn),
+				Shooter.INSTANCE.shoot(),
 				new FollowPath(paths.LeaveZone)
 		).schedule();
 	}
