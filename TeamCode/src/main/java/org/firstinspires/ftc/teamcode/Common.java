@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
+
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 
@@ -8,6 +10,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.OptionalInt;
 
+import dev.nextftc.hardware.positionable.Positionable;
+import dev.nextftc.hardware.powerable.Powerable;
+@Configurable
 public class Common {
 	@NonNull
 	public static String formatObeliskID(int x) {
@@ -53,5 +58,17 @@ public class Common {
 				.rotate(invHeading, false);
 
 		return inverted.withHeading(MathFunctions.normalizeAngle(invHeading));
+	}
+	public static void overrideCacheZero(Positionable... l) {
+		for (Positionable p : l) {
+			p.setPosition(0.03);
+			p.setPosition(0);
+		}
+	}
+	public static void overrideCacheZero(Powerable... l) {
+		for (Powerable p : l) {
+			p.setPower(0.02);
+			p.setPower(0);
+		}
 	}
 }

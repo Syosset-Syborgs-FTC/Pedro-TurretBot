@@ -1,22 +1,58 @@
 package org.firstinspires.ftc.teamcode.control;
 
 import com.pedropathing.geometry.Pose;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ShooterInterpolator {
-	public static ShooterInterpolator INSTANCE = null; // todo: fill in calibration points
-	private final CalibrationPoint[] points;
+	public static ShooterInterpolator INSTANCE = new ShooterInterpolator(5, 2); // todo: fill in calibration points
+	private CalibrationPoint[] points = {
+			new CalibrationPoint(
+					new Pose(-3, 18),
+					new ShooterState(1530, 0.25)
+			),
+			new CalibrationPoint(
+					new Pose(-53, 54),
+					new ShooterState(1400, 0.05)
+			),
+			new CalibrationPoint(
+					new Pose(-38, 28),
+					new ShooterState(1470, 0.15)
+			),
+			new CalibrationPoint(
+					new Pose(-65, 10),
+					new ShooterState(1500, 0.25)
+			),
+			new CalibrationPoint(
+					new Pose(-65, -1),
+					new ShooterState(1550, 0.35)
+			),
+			new CalibrationPoint(
+					new Pose(-14.86, 10.06),
+					new ShooterState(1650, 0.45)
+			),
+			new CalibrationPoint(
+					new Pose(-32.5, -13.1),
+					new ShooterState(1620, 0.55)
+			),
+			new CalibrationPoint(
+					new Pose(-22.07, -33.6),
+					new ShooterState(1650, 0.6)
+			),
+			new CalibrationPoint(
+					new Pose(-49, -23),
+					new ShooterState(1700, 0.65)
+			),
+			new CalibrationPoint(
+					new Pose(-65, -36),
+					new ShooterState(1800, 0.75)
+			)
+	};
 	private final int kNeighbors;
 	private final double power;
 
 	private final double[] distancesSq;
 	private final int[] indices;
-	private ShooterInterpolator(CalibrationPoint[] points, int kNeighbors, double power) {
-		if (points == null || points.length == 0) {
-			throw new IllegalArgumentException("You must provide at least one calibration point.");
-		}
-		this.points = points;
+
+	private ShooterInterpolator(int kNeighbors, double power) {
 		this.kNeighbors = Math.min(kNeighbors, points.length);
 		this.power = power;
 
@@ -25,15 +61,13 @@ public class ShooterInterpolator {
 	}
 
 
-	public ShooterState getTargetState(Pose currentPose) {
-		return getTargetState(currentPose, new ShooterState(0, 0));
-	}
 
-	public ShooterState getTargetState(Pose currentPose, ShooterState stateToUpdate) {
+	public ShooterState getTargetState(Pose currentPose) {
+		ShooterState state = new ShooterState(0,0);
 		if (points.length == 1) {
-			stateToUpdate.velocity = points[0].state.velocity;
-			stateToUpdate.hoodAngle = points[0].state.hoodAngle;
-			return stateToUpdate;
+			state.velocity = points[0].state.velocity;
+			state.hoodAngle = points[0].state.hoodAngle;
+			return state;
 		}
 
 		double x = currentPose.getX();
@@ -46,9 +80,9 @@ public class ShooterInterpolator {
 
 			// exact match
 			if (distSq < 0.001) {
-				stateToUpdate.velocity = points[i].state.velocity;
-				stateToUpdate.hoodAngle = points[i].state.hoodAngle;
-				return stateToUpdate;
+				state.velocity = points[i].state.velocity;
+				state.hoodAngle = points[i].state.hoodAngle;
+				return state;
 			}
 
 			distancesSq[i] = distSq;
@@ -92,14 +126,14 @@ public class ShooterInterpolator {
 
 		// prevent div by 0
 		if (weightSum == 0) {
-			stateToUpdate.velocity = points[indices[0]].state.velocity;
-			stateToUpdate.hoodAngle = points[indices[0]].state.hoodAngle;
+			state.velocity = points[indices[0]].state.velocity;
+			state.hoodAngle = points[indices[0]].state.hoodAngle;
 		} else {
-			stateToUpdate.velocity = powerSum / weightSum;
-			stateToUpdate.hoodAngle = angleSum / weightSum;
+			state.velocity = powerSum / weightSum;
+			state.hoodAngle = angleSum / weightSum;
 		}
 
-		return stateToUpdate;
+		return state;
 	}
 
 	public static class CalibrationPoint {

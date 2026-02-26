@@ -4,6 +4,10 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Common;
@@ -19,6 +23,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
+import dev.nextftc.hardware.positionable.Positionable;
 
 @Configurable
 public class TurretAngleControl implements Subsystem {
@@ -47,11 +52,13 @@ public class TurretAngleControl implements Subsystem {
 	public void initialize() {
 		followingAprilTag = false;
 		turretTargetAngle = 0;
+		angler.getServo().setDirection(Servo.Direction.REVERSE);
 		turret.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		turret.zero();
 		turretControl.reset();
 		turretControl.setGoal(new KineticState());
-		angler.setPosition(0);
+		Common.overrideCacheZero(angler);
+		Common.overrideCacheZero(turret);
 		potentiometer = ActiveOpMode.hardwareMap().get(AnalogInput.class, "pot");
 		LimeLightAprilTag.INSTANCE.initialize();
 	}
@@ -72,7 +79,7 @@ public class TurretAngleControl implements Subsystem {
 		turret.setPower(turretPower);
 
 		Vector alignTarget = new Vector();
-		alignTarget.setOrthogonalComponents(-72, Common.alliance == Common.Alliance.Red ? 72 : -72);
+		alignTarget.setOrthogonalComponents(-62.5, Common.alliance == Common.Alliance.Red ? 60 : -60);
 
 		if (followingAprilTag) {
 			double robotHeading = SensorFusion.INSTANCE.getPose().getHeading();
@@ -88,7 +95,7 @@ public class TurretAngleControl implements Subsystem {
 		return turret.getCurrentPosition() * scalar;
 	}
 
-	public void setAnglerPosition(double pos) { angler.setPosition(pos); }
+	public void setAnglerPosition(double pos) { angler.setPosition(Range.clip(pos, 0, 0.85)); }
 	public void offsetAnglerPosition(double pos) { setAnglerPosition(getAnglerPosition() + pos); }
 	public double getAnglerPosition() { return angler.getPosition(); }
 	public double getTurretAngle() { return turretTargetAngle; }

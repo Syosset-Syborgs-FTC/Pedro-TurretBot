@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.control.PIDFController;
 
 import dev.nextftc.core.commands.Command;
@@ -19,11 +20,10 @@ import dev.nextftc.hardware.impl.ServoEx;
 @Configurable
 public class Shooter implements Subsystem {
 
-	public volatile static double kP = 0.0002;
+	public volatile static double kP = 0.01;
 	public volatile static double kI = 0.00062;
-	public volatile static double kD = 0.00001;
+	public volatile static double kD = 0;
 	public volatile static double kF = 0.0062;
-	public volatile static double VELOCITY_FILTER_ALPHA = 0.9;
 	public static Shooter INSTANCE = new Shooter();
 
 	MotorEx intake = new MotorEx("in");
@@ -62,14 +62,8 @@ public class Shooter implements Subsystem {
 		currentVelocity = 0;
 
 		// override write cache
-		intake.setPower(0.02);
-		intake.setPower(0);
-		gate.setPosition(0.82);
-		gate.setPosition(0.8);
-		rgbLight.setPosition(0.02);
-		rgbLight.setPosition(0);
-		flywheel.setPower(0.02);
-		flywheel.setPower(0);
+		Common.overrideCacheZero(rgbLight, gate);
+		Common.overrideCacheZero(flywheel, intake);
 		controller.reset();
 	}
 
@@ -152,12 +146,7 @@ public class Shooter implements Subsystem {
 		double dt = (currentTime - prevTime) / 1.0E9;
 		ActiveOpMode.telemetry().addData("dt", dt);
 
-		if (dt > 0) {
-			double rawVelocity = (currentTicks - prevEncoderTicks) / dt;
-
-			currentVelocity = (VELOCITY_FILTER_ALPHA * rawVelocity)
-					+ ((1.0 - VELOCITY_FILTER_ALPHA) * currentVelocity);
-		}
+		currentVelocity = flywheel.getVelocity();
 		prevEncoderTicks = currentTicks;
 		prevTime = currentTime;
 
