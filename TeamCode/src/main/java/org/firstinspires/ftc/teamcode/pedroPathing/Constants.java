@@ -43,7 +43,7 @@ public class Constants {
 			.yVelocity(60);
 	public static volatile double forwardPodY = -122.5;
 	public static volatile double strafePodX = -192;
-	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.925, 	1);
+	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.5, 	1);
 
 	public static PinpointConstants pinpointConstants = new PinpointConstants()
 			.encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD)

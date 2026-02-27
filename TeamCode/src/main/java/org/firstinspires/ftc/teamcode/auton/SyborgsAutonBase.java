@@ -41,7 +41,7 @@ public class SyborgsAutonBase extends NextFTCOpMode {
 	}
 	public void addParametricToEnd(PathChain chain, Runnable callback, double param) {
 		// setCallbacks doesn't delete already existing ones
-		chain.setCallbacks(new ParametricCallback(chain.size() - 1, param, PedroComponent.follower(), callback));
+		chain.setCallbacks(new ParametricCallback(0, param, PedroComponent.follower(), callback));
 	}
 
 	public void addIntakeCallbacks(PathChain move, PathChain back) {

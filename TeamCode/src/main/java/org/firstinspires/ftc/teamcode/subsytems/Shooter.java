@@ -76,6 +76,13 @@ public class Shooter implements Subsystem {
 	public void stopIntake() {
 		 setIntakeState(0);
 	}
+	public double getCurrentVelocity() {
+		return currentVelocity;
+	}
+
+	public double getTargetVelocity() {
+		return targetVelocity;
+	}
 
 	public void setIntakeState(int state) {
 		this.intakeState = state;
@@ -124,7 +131,7 @@ public class Shooter implements Subsystem {
 
 	public Command shootCommand() {
 		return new ParallelDeadlineGroup(
-				new Delay(2),
+				new Delay(3),
 				new InstantCommand(() -> setShooting(true))
 		).then(
 				new InstantCommand(() -> setShooting(false))
