@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.control.PIDFController;
 
@@ -60,11 +61,19 @@ public class Shooter implements Subsystem {
 		prevEncoderTicks = flywheel.getCurrentPosition();
 		prevTime = System.nanoTime();
 		currentVelocity = 0;
+		flywheel.getMotor().setCurrentAlert(7, CurrentUnit.AMPS);
+
 
 		// override write cache
 		Common.overrideCacheZero(rgbLight, gate);
 		Common.overrideCacheZero(flywheel, intake);
 		controller.reset();
+	}
+	public void startIntake() {
+		setIntakeState(1);
+	}
+	public void stopIntake() {
+		 setIntakeState(0);
 	}
 
 	public void setIntakeState(int state) {
@@ -112,7 +121,7 @@ public class Shooter implements Subsystem {
 		updateIntakeTransfer();
 	}
 
-	public Command shoot() {
+	public Command shootCommand() {
 		return new ParallelRaceGroup(
 				new Delay(2),
 				new InstantCommand(() -> setShooting(true))
@@ -138,7 +147,7 @@ public class Shooter implements Subsystem {
 	}
 
 	private void updateFlywheel() {
-		if (loopCount++ % 20 == 0) {
+		if (loopCount++ % 20 == 0 && voltage != null) {
 			cachedVoltage = voltage.getVoltage();
 		}
 		double currentTicks = flywheel.getCurrentPosition();

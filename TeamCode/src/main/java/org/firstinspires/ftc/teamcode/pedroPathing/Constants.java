@@ -23,10 +23,10 @@ public class Constants {
 			.mass(12.7)
 			.forwardZeroPowerAcceleration(-32.1)
 			.lateralZeroPowerAcceleration(-67.8)
-//			.translationalPIDFCoefficients(new PIDFCoefficients(0.7, 0.0, 0.07, 0))
-//			.headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.04, 0.01))
-//			.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.0003, 0.01, 0.6))
-			.centripetalScaling(0.001);
+			.translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0.0, 0.02, 0.03))
+			.headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.15, 0.02))
+			.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.0000001, 0.6, 0.01))
+			.centripetalScaling(0.00094);
 
 
 	public static MecanumConstants driveConstants = new MecanumConstants()
@@ -43,7 +43,7 @@ public class Constants {
 			.yVelocity(60);
 	public static volatile double forwardPodY = -122.5;
 	public static volatile double strafePodX = -192;
-	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.85, 	1);
 
 	public static PinpointConstants pinpointConstants = new PinpointConstants()
 			.encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD)
@@ -57,6 +57,7 @@ public class Constants {
 //		PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
 		return new FollowerBuilder(followerConstants, hardwareMap)
 				.setLocalizer(SensorFusion.INSTANCE)
+//				.pinpointLocalizer(pinpointConstants)
 				.mecanumDrivetrain(driveConstants)
 				.pathConstraints(pathConstraints)
 				.build();

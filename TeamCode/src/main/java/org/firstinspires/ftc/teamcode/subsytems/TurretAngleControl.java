@@ -104,6 +104,9 @@ public class TurretAngleControl implements Subsystem {
 		angle = wrapAngle(angle);
 		this.turretTargetAngle = angle;
 	}
+	public void offsetTurretAngle(double offset) {
+		setTurretAngle(getTurretAngle() + offset);
+	}
 	public static double wrapAngle(double angleRadians) {
 		double min = Math.toRadians(-215);
 

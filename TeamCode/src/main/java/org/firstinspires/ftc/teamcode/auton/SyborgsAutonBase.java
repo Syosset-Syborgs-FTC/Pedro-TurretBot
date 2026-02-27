@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auton;
 
+import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.callbacks.ParametricCallback;
 import com.photon.photoncore.PhotonCore;
 
 import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
@@ -36,5 +38,14 @@ public class SyborgsAutonBase extends NextFTCOpMode {
 	}
 	public void onStop() {
 		LimeLightAprilTag.INSTANCE.stop();
+	}
+	public void addParametricToEnd(PathChain chain, Runnable callback, double param) {
+		// setCallbacks doesn't delete already existing ones
+		chain.setCallbacks(new ParametricCallback(chain.size() - 1, param, PedroComponent.follower(), callback));
+	}
+
+	public void addIntakeCallbacks(PathChain move, PathChain back) {
+		addParametricToEnd(move, Shooter.INSTANCE::startIntake, 0.5);
+		addParametricToEnd(back, Shooter.INSTANCE::stopIntake, 0.5);
 	}
 }

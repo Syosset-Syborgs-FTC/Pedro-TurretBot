@@ -3,19 +3,19 @@ package org.firstinspires.ftc.teamcode.control;
 import com.pedropathing.geometry.Pose;
 
 public class ShooterInterpolator {
-	public static ShooterInterpolator INSTANCE = new ShooterInterpolator(5, 2); // todo: fill in calibration points
+	public static ShooterInterpolator INSTANCE = new ShooterInterpolator(5, 2);
 	private CalibrationPoint[] points = {
+			new CalibrationPoint(
+					new Pose(-53, 54),
+					new ShooterState(1400, 0)
+			),
+			new CalibrationPoint(
+					new Pose(-48, 38),
+					new ShooterState(1400, 0.02)
+			),
 			new CalibrationPoint(
 					new Pose(-3, 18),
 					new ShooterState(1530, 0.25)
-			),
-			new CalibrationPoint(
-					new Pose(-53, 54),
-					new ShooterState(1400, 0.05)
-			),
-			new CalibrationPoint(
-					new Pose(-38, 28),
-					new ShooterState(1470, 0.15)
 			),
 			new CalibrationPoint(
 					new Pose(-65, 10),
@@ -38,13 +38,17 @@ public class ShooterInterpolator {
 					new ShooterState(1650, 0.6)
 			),
 			new CalibrationPoint(
+					new Pose(0,0),
+					new ShooterState(1700, 0.65)
+			),
+			new CalibrationPoint(
 					new Pose(-49, -23),
 					new ShooterState(1700, 0.65)
 			),
 			new CalibrationPoint(
 					new Pose(-65, -36),
 					new ShooterState(1800, 0.75)
-			)
+			),
 	};
 	private final int kNeighbors;
 	private final double power;

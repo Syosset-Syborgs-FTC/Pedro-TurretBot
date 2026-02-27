@@ -7,19 +7,11 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
-import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
-import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.components.BindingsComponent;
-import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.ftc.components.LoopTimeComponent;
+
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 @Autonomous
 public class RedFar extends SyborgsAutonBase {
@@ -27,18 +19,23 @@ public class RedFar extends SyborgsAutonBase {
 	public void onStartButtonPressed() {
 		Shooter.INSTANCE.setTargetVelocity(2000);
 		Paths paths = new Paths(follower());
+
+		addIntakeCallbacks(paths.GPP, paths.GPPReturn);
+		addIntakeCallbacks(paths.PGP, paths.PGPReturn);
+		addIntakeCallbacks(paths.PPG, paths.PPGReturn);
+
 		new SequentialGroup(
 				new FollowPath(paths.Preload),
-				Shooter.INSTANCE.shoot(),
+				Shooter.INSTANCE.shootCommand(),
 				new FollowPath(paths.GPP),
 				new FollowPath(paths.GPPReturn),
-				Shooter.INSTANCE.shoot(),
+				Shooter.INSTANCE.shootCommand(),
 				new FollowPath(paths.PGP),
 				new FollowPath(paths.PGPReturn),
-				Shooter.INSTANCE.shoot(),
+				Shooter.INSTANCE.shootCommand(),
 				new FollowPath(paths.PPG),
 				new FollowPath(paths.PPGReturn),
-				Shooter.INSTANCE.shoot(),
+				Shooter.INSTANCE.shootCommand(),
 				new FollowPath(paths.LeaveZone)
 		).schedule();
 	}

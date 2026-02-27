@@ -36,7 +36,7 @@ import dev.nextftc.ftc.components.LoopTimeComponent;
 @TeleOp
 @Configurable
 public class SyborgsTeleop extends NextFTCOpMode {
-	double targetVelocity = 2000;
+	double targetVelocity = 1550;
 	boolean flywheelEnabled = false;
 //	AnalogInput potentiometer;
 	public SyborgsTeleop() {
@@ -59,7 +59,6 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		PhotonCore.enable();
 		Shooter.INSTANCE.setTargetVelocity(0);
 //		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
-
 		gamepad1().rightBumper()
 				.whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
 	}
@@ -70,6 +69,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 
 	@Override
 	public void onStartButtonPressed() {
+		TurretAngleControl.INSTANCE.setAnglerPosition(0.5);
 		gamepad1().rightBumper().clear$bindings();
 		follower().startTeleopDrive(true);
 		gamepad1().options().whenBecomesTrue(() -> headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading());
@@ -81,11 +81,11 @@ public class SyborgsTeleop extends NextFTCOpMode {
 
 		gamepad1().dpadUp().whenTrue(() -> targetVelocity += 10);
 		gamepad1().dpadDown().whenTrue(() -> targetVelocity -= 10);
-		gamepad1().dpadLeft().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle - Math.toRadians(15)));
-		gamepad1().dpadRight().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.setTurretAngle(TurretAngleControl.INSTANCE.turretTargetAngle + Math.toRadians(15)));
+		gamepad1().dpadLeft().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetTurretAngle(-Math.toRadians(15)));
+		gamepad1().dpadRight().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetTurretAngle(Math.toRadians(15)));
 
 		gamepad1().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.followingAprilTag = !TurretAngleControl.INSTANCE.followingAprilTag);
-		gamepad1().a().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.5 : 1);
+		gamepad1().a().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.35 : 1);
 		gamepad1().x().whenBecomesTrue(() -> autoPowerAngle = !autoPowerAngle);
 
 		gamepad2().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
