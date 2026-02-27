@@ -33,7 +33,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.ftc.components.LoopTimeComponent;
 
 //@Disabled
-@TeleOp
+@TeleOp(group = "Teleop")
 @Configurable
 public class SyborgsTeleop extends NextFTCOpMode {
 	double targetVelocity = 1550;

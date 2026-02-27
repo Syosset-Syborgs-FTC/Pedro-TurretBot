@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static dev.nextftc.ftc.Gamepads.*;
@@ -11,7 +12,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
 @TeleOp
-
+@Disabled
 public class DriveTrainTest extends NextFTCOpMode {
 	MotorEx fl = new MotorEx("fl");
 	MotorEx fr = new MotorEx("fr");

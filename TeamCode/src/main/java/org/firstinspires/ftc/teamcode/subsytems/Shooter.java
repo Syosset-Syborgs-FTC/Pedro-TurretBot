@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.control.PIDFController;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -122,7 +123,7 @@ public class Shooter implements Subsystem {
 	}
 
 	public Command shootCommand() {
-		return new ParallelRaceGroup(
+		return new ParallelDeadlineGroup(
 				new Delay(2),
 				new InstantCommand(() -> setShooting(true))
 		).then(

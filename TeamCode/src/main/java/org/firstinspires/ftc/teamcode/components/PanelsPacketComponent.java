@@ -29,6 +29,13 @@ public class PanelsPacketComponent implements Component {
 	}
 	@Override
 	public void postWaitForStart() {
+		SensorFusion.INSTANCE.cachedMT1Pose.ifPresent(p -> Drawing.drawRobot(p, "#4CAF50"));
+		SensorFusion.INSTANCE.cachedMT2Pose.ifPresent(p -> Drawing.drawRobot(p, "#FF5722"));
+		SensorFusion.INSTANCE.cachedCameraPose.ifPresent(p -> Drawing.drawRobot(p, "#FFFFFF"));
+
+		Drawing.drawRobot(follower().getPose());
+		Drawing.drawPoseHistory(follower().getPoseHistory());
+
 		Drawing.sendPacket();
 	}
 }
