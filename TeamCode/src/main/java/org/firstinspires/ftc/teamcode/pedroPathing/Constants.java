@@ -37,8 +37,8 @@ public class Constants {
 			.leftRearMotorName("bl")
 			.leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
 			.leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-			.rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-			.rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+			.rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+			.rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
 			.xVelocity(80)
 			.yVelocity(60);
 	public static volatile double forwardPodY = -122.5;

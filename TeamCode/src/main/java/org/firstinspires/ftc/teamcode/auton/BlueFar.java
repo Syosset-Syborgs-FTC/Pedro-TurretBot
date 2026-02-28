@@ -20,17 +20,17 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
 
 @Autonomous(group = "Auton")
-public class RedFar extends SyborgsAutonBase {
+public class BlueFar extends SyborgsAutonBase {
 	@Override
 	public void onInit() {
 		super.onInit();
-		follower().setPose(new Pose(64.000, 16.000, Math.toRadians(180)));
+		follower().setPose(new Pose(64.000, -16.000, Math.toRadians(180)));
 	}
 
 	@Override
 	public void onStartButtonPressed() {
-		Common.alliance = Common.Alliance.Red;
-		Shooter.INSTANCE.setTargetVelocity(1645);
+		Common.alliance = Common.Alliance.Blue;
+		Shooter.INSTANCE.setTargetVelocity(1670);
 		TurretAngleControl.INSTANCE.setAnglerPosition(0.6);
 		Paths paths = new Paths(follower());
 //		Shooter.INSTANCE.startIntake();
@@ -77,112 +77,112 @@ public class RedFar extends SyborgsAutonBase {
 					.addPath(
 							new BezierLine(
 									follower.getPose(),
-									new Pose(-9, 10)
+									new Pose(-9, -13)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(130))
+					.setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-140))
 //					.setBrakingStart()
 					.build();
 
 			GPP = follower.pathBuilder()
 					.addPath(
 							new BezierCurve(
-									new Pose(-9, 10),
-									new Pose(5.045, 12.257),
-									new Pose(24.602, 16.382),
-									new Pose(26.319, 18.985),
-									new Pose(32.761, 22.482)
+									new Pose(-9, -13),
+									new Pose(5.045, -12.257),
+									new Pose(24.602, -16.382),
+									new Pose(26.319, -18.985),
+									new Pose(37.761, -22.482)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(90))
+					.setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-90))
 					.addPath(
 							new BezierLine(
-									new Pose(32.761, 22.482),
-									new Pose(32.761, 57.482)
+									new Pose(37.761, -22.482),
+									new Pose(37.761, -60.482)
 							)
 					)
-					.setConstantHeadingInterpolation(Math.toRadians(90))
+					.setConstantHeadingInterpolation(Math.toRadians(-90))
 					.build();
 
 			GPPReturn = follower.pathBuilder()
 					.addPath(
 							new BezierCurve(
-									new Pose(35.761, 57.482),
-									new Pose(35.418, 15.757),
-									new Pose(-9, 10)
+									new Pose(37.761, -60.482),
+									new Pose(37.418, -15.757),
+									new Pose(-9, -13)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(130))
+					.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-140))
 					.build();
 
 			PGP = follower.pathBuilder()
 					.addPath(
 							new BezierCurve(
-									new Pose(-9, 10),
-									new Pose(14.843, 12.264),
-									new Pose(14.505, 20.730),
-									new Pose(14.051, 26.464)
+									new Pose(-9, -13),
+									new Pose(18.843, -12.264),
+									new Pose(18.505, -20.730),
+									new Pose(18.051, -26.464)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(90))
+					.setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-90))
 					.addPath(
 							new BezierLine(
-									new Pose(14.051, 26.464),
-									new Pose(14.051, 57.464)
+									new Pose(18.051, -26.464),
+									new Pose(18.051, -60.464)
 							)
 					)
-					.setConstantHeadingInterpolation(Math.toRadians(90))
+					.setConstantHeadingInterpolation(Math.toRadians(-90))
 					.build();
 
 			PGPReturn = follower.pathBuilder()
 					.addPath(
 							new BezierCurve(
-									new Pose(14.051, 57.464),
-									new Pose(10.290, 24.486),
-									new Pose(-9, 10)
+									new Pose(18.051, -60.464),
+									new Pose(10.290, -24.486),
+									new Pose(-9, -13)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(130))
+					.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-140))
 					.build();
 
 			PPG = follower.pathBuilder()
-					.addPath(new BezierPoint(-9, 10))
-					.setLinearHeadingInterpolation(130, 90)
+					.addPath(new BezierPoint(-9, -13))
+					.setLinearHeadingInterpolation(-140, -90)
 					.addPath(
 							new BezierCurve(
-									new Pose(-9, 10),
-									new Pose(-9, 25.032),
-									new Pose(-9, 26.502)
+									new Pose(-9, -13),
+									new Pose(-9, -25.032),
+									new Pose(-9, -26.502)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(90), 0.3)
+					.setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-90), 0.3)
 					.addPath(
 							new BezierLine(
-									new Pose(-9, 26.502),
-									new Pose(-9, 47.502)
+									new Pose(-9, -26.502),
+									new Pose(-9, -50.502)
 							)
 					)
-					.setConstantHeadingInterpolation(Math.toRadians(90))
+					.setConstantHeadingInterpolation(Math.toRadians(-90))
 					.build();
 
 			PPGReturn = follower.pathBuilder()
 					.addPath(
 							new BezierLine(
-									new Pose(-9, 47.502),
-									new Pose(-38, 10)
+									new Pose(-9, -50.502),
+									new Pose(-38, -10)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(115))
+					.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-115))
 					.build();
 
 			LeaveZone = follower.pathBuilder()
 					.addPath(
 							new BezierLine(
-									new Pose(-9, 10),
-									new Pose(1.134, 38.270)
+									new Pose(-9, -13),
+									new Pose(1.134, -38.270)
 							)
 					)
-					.setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(90))
+					.setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-90))
 					.build();
 		}
 	}

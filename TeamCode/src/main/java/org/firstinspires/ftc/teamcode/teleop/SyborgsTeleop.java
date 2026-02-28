@@ -69,6 +69,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 
 	@Override
 	public void onStartButtonPressed() {
+		Shooter.INSTANCE.setTargetVelocity(targetVelocity);
 		TurretAngleControl.INSTANCE.setAnglerPosition(0.5);
 		gamepad1().rightBumper().clear$bindings();
 		follower().startTeleopDrive(true);
@@ -91,6 +92,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		gamepad2().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
 		gamepad2().a().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(-0.05));
 		gamepad2().dpadUp().whenBecomesTrue(() -> Ascent.INSTANCE.setAngle(Ascent.INSTANCE.getAngle().plus(Angle.fromDeg(15))));
+		gamepad2().rightBumper().whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
 	}
 	double driveSpeedMultiplier = 1;
 	Vector drive = new Vector();
@@ -102,7 +104,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		if (autoPowerAngle) {
 			Pose currentPose = follower().getPose();
 			if (Common.alliance == Common.Alliance.Blue) {
-				currentPose = new Pose(-currentPose.getX(), currentPose.getY());
+				currentPose = new Pose(currentPose.getX(), -currentPose.getY());
 			}
 			ShooterState state = ShooterInterpolator.INSTANCE.getTargetState(currentPose);
 			TurretAngleControl.INSTANCE.setAnglerPosition(state.hoodAngle);

@@ -105,6 +105,10 @@ public class Shooter implements Subsystem {
 	}
 
 	private void updateRGB() {
+		if (!shooting && intakeState == 1) {
+			rgbLight.setPosition(0.3); // orange
+			return;
+		}
 		if (targetVelocity == 0) {
 			rgbLight.setPosition(0.28); // red
 		} else if (Math.abs(targetVelocity - currentVelocity) > 100) {
@@ -173,7 +177,7 @@ public class Shooter implements Subsystem {
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
 		if (ActiveOpMode.opModeInInit()) return;
 		flywheel.setPower(power);
-
+//		flywheel.setPower(1);
 		Telemetry telemetry = ActiveOpMode.telemetry();
 		if (flywheel.getMotor().isOverCurrent()) {
 			telemetry.addLine("Flywheel is over current!");

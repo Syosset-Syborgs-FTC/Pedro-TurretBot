@@ -12,7 +12,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
 @TeleOp
-@Disabled
+//@Disabled
 public class DriveTrainTest extends NextFTCOpMode {
 	MotorEx fl = new MotorEx("fl");
 	MotorEx fr = new MotorEx("fr");
