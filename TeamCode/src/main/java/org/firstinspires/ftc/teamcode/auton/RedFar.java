@@ -14,7 +14,9 @@ import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.delays.WaitUntil;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -42,7 +44,10 @@ public class RedFar extends SyborgsAutonBase {
 
 		new SequentialGroup(
 				new FollowPath(paths.Preload),
-				new WaitUntil(() -> Math.abs(Shooter.INSTANCE.getCurrentVelocity() - Shooter.INSTANCE.getTargetVelocity()) < 15),
+				new ParallelRaceGroup(
+						new WaitUntil(() -> Math.abs(Shooter.INSTANCE.getCurrentVelocity() - Shooter.INSTANCE.getTargetVelocity()) < 15),
+						new Delay(4)
+				),
 				Shooter.INSTANCE.shootCommand(),
 				new InstantCommand(Shooter.INSTANCE::startIntake),
 				new FollowPath(paths.GPP),

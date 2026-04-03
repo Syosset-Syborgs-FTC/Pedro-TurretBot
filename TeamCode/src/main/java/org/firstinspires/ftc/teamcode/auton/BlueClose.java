@@ -14,26 +14,24 @@ import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.delays.WaitUntil;
-import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
 
 @Autonomous(group = "Auton")
-public class BlueFar extends SyborgsAutonBase {
+public class BlueClose extends SyborgsAutonBase {
 	@Override
 	public void onInit() {
 		super.onInit();
-		follower().setPose(new Pose(64.000, -16.000, Math.toRadians(180)));
+		follower().setPose(new Pose(-54.000, -54.000, Math.toRadians(180)));
 	}
 
 	@Override
 	public void onStartButtonPressed() {
 		Common.alliance = Common.Alliance.Blue;
-		Shooter.INSTANCE.setTargetVelocity(1670);
-		TurretAngleControl.INSTANCE.setAnglerPosition(0.6);
+		Shooter.INSTANCE.setTargetVelocity(1400);
+		TurretAngleControl.INSTANCE.setAnglerPosition(0);
 		Paths paths = new Paths(follower());
 //		Shooter.INSTANCE.startIntake();
 
@@ -43,27 +41,24 @@ public class BlueFar extends SyborgsAutonBase {
 
 
 		new SequentialGroup(
-				new FollowPath(paths.Preload),
-				new ParallelRaceGroup(
-					new WaitUntil(() -> Math.abs(Shooter.INSTANCE.getCurrentVelocity() - Shooter.INSTANCE.getTargetVelocity()) < 15),
-					new Delay(4)
-			),
-				Shooter.INSTANCE.shootCommand(),
-				new InstantCommand(Shooter.INSTANCE::startIntake),
-				new FollowPath(paths.GPP),
-				new FollowPath(paths.GPPReturn),
-				Shooter.INSTANCE.shootCommand(),
-
-				new FollowPath(paths.PGP),
-				new FollowPath(paths.PGPReturn),
-				Shooter.INSTANCE.shootCommand(),
-
-				new FollowPath(paths.PPG),
-				new InstantCommand(() -> Shooter.INSTANCE.setTargetVelocity(1500)),
-				new FollowPath(paths.PPGReturn),
+//				new FollowPath(paths.Preload),
+				new WaitUntil(() -> Math.abs(Shooter.INSTANCE.getCurrentVelocity() - Shooter.INSTANCE.getTargetVelocity()) < 15),
+				new FollowPath(paths.LeaveZone),
 				Shooter.INSTANCE.shootCommand()
+//				new InstantCommand(Shooter.INSTANCE::startIntake),
+//				new FollowPath(paths.GPP),
+//				new FollowPath(paths.GPPReturn),
+//				Shooter.INSTANCE.shootCommand(),
+//
+//				new FollowPath(paths.PGP),
+//				new FollowPath(paths.PGPReturn),
+//				Shooter.INSTANCE.shootCommand(),
+//
+//				new FollowPath(paths.PPG),
+//				new InstantCommand(() -> Shooter.INSTANCE.setTargetVelocity(1500)),
+//				new FollowPath(paths.PPGReturn),
+//				Shooter.INSTANCE.shootCommand()
 
-//				new FollowPath(paths.LeaveZone)
 		).schedule();
 	}
 
@@ -183,8 +178,9 @@ public class BlueFar extends SyborgsAutonBase {
 			LeaveZone = follower.pathBuilder()
 					.addPath(
 							new BezierLine(
-									new Pose(-9, -13),
-									new Pose(1.134, -38.270)
+									new Pose(-54.000, -54.000),
+									new Pose(-60, -35)
+//									new Pose(1.134, -38.270)
 							)
 					)
 					.setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-90))
