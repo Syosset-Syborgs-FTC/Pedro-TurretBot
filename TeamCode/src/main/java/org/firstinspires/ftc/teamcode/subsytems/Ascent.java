@@ -8,6 +8,7 @@ import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.control.feedforward.GravityFeedforwardParameters;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.core.units.Angle;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 
 public class Ascent implements Subsystem {
@@ -38,6 +39,8 @@ public class Ascent implements Subsystem {
 	}
 	@Override
 	public void periodic() {
-		ascentMotor.setPower(pid.calculate(ascentMotor.getState().times(2*Math.PI/oneRev)));
+		double power = pid.calculate(ascentMotor.getState().times(2*Math.PI/oneRev));
+		ascentMotor.setPower(power);
+		ActiveOpMode.telemetry().addData("ascent power", power);
 	}
 }
