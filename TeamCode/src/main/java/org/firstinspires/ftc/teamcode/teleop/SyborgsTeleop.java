@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.control.ShooterInterpolator;
 import org.firstinspires.ftc.teamcode.localizer.LimeLightAprilTag;
 import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsytems.Ascent;
+//import org.firstinspires.ftc.teamcode.subsytems.Ascent;
 import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
@@ -47,7 +47,9 @@ public class SyborgsTeleop extends NextFTCOpMode {
 				BindingsComponent.INSTANCE,
 				PanelsPacketComponent.INSTANCE,
 				BulkReadComponent.INSTANCE,
-				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE, Ascent.INSTANCE)
+				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE
+//						, Ascent.INSTANCE
+						)
 		);
 	}
 	boolean autoPowerAngle = false;
@@ -91,7 +93,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 
 		gamepad2().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
 		gamepad2().a().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(-0.05));
-		gamepad2().dpadUp().whenBecomesTrue(() -> Ascent.INSTANCE.setAngle(Ascent.INSTANCE.getAngle().plus(Angle.fromDeg(15))));
+//		gamepad2().dpadUp().whenBecomesTrue(() -> Ascent.INSTANCE.setAngle(Ascent.INSTANCE.getAngle().plus(Angle.fromDeg(15))));
 		gamepad2().rightBumper().whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
 	}
 	double driveSpeedMultiplier = 1;
