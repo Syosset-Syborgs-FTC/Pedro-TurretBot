@@ -22,14 +22,15 @@ import dev.nextftc.hardware.impl.ServoEx;
 @Configurable
 public class Shooter implements Subsystem {
 
-	public volatile static double kP = 0.01;
-	public volatile static double kI = 0.00062;
+	public volatile static double kP = 0.01/2;
+	public volatile static double kI = 0.00062/2;
 	public volatile static double kD = 0;
-	public volatile static double kF = 0.0062;
+	public volatile static double kF = 0.0062/2;
 	public static Shooter INSTANCE = new Shooter();
 
 	MotorEx intake = new MotorEx("in");
 	MotorEx flywheel = new MotorEx("st");
+	MotorEx flywheel2 = new MotorEx("st2").reversed();
 	PIDFController controller = new PIDFController(kP, kI, kD);
 	ServoEx gate = new ServoEx("ga");
 	ServoEx rgbLight = new ServoEx("rgb");
@@ -58,7 +59,9 @@ public class Shooter implements Subsystem {
 		cachedVoltage = 12.0;
 
 		flywheel.zero();
+		flywheel2.zero();
 		flywheel.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		flywheel2.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		prevEncoderTicks = flywheel.getCurrentPosition();
 		prevTime = System.nanoTime();
 		currentVelocity = 0;
@@ -177,6 +180,7 @@ public class Shooter implements Subsystem {
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
 		if (ActiveOpMode.opModeInInit()) return;
 		flywheel.setPower(power);
+		flywheel2.setPower(power*8/9);
 //		flywheel.setPower(1);
 		Telemetry telemetry = ActiveOpMode.telemetry();
 		if (flywheel.getMotor().isOverCurrent()) {
