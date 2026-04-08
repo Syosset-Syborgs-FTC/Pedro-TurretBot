@@ -30,7 +30,7 @@ public class Shooter implements Subsystem {
 
 	MotorEx intake = new MotorEx("in");
 	MotorEx flywheel = new MotorEx("st");
-	MotorEx flywheel2 = new MotorEx("st2").reversed();
+	MotorEx flywheel2 = new MotorEx("st2");
 	PIDFController controller = new PIDFController(kP, kI, kD);
 	ServoEx gate = new ServoEx("ga");
 	ServoEx rgbLight = new ServoEx("rgb");
