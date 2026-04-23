@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.control.PIDFController;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -37,7 +36,9 @@ public class Shooter implements Subsystem {
 
 	double targetVelocity = 0;
 	boolean autoAlignIndicator = false;
-	int intakeState = 0;
+
+	// CHANGED: Changed to double to support fractional power (e.g. 0.5)
+	double intakeState = 0;
 	boolean shooting = false;
 
 	private double prevEncoderTicks = 0;
@@ -73,12 +74,15 @@ public class Shooter implements Subsystem {
 		Common.overrideCacheZero(flywheel, intake);
 		controller.reset();
 	}
+
 	public void startIntake() {
-		setIntakeState(1);
+		setIntakeState(1.0);
 	}
+
 	public void stopIntake() {
-		 setIntakeState(0);
+		setIntakeState(0.0);
 	}
+
 	public double getCurrentVelocity() {
 		return currentVelocity;
 	}
@@ -87,16 +91,17 @@ public class Shooter implements Subsystem {
 		return targetVelocity;
 	}
 
-	public void setIntakeState(int state) {
+	// CHANGED: Now accepts a double
+	public void setIntakeState(double state) {
 		this.intakeState = state;
 	}
 
 	public void toggleIntake() {
-		setIntakeState(this.intakeState == 1 ? 0 : 1);
+		setIntakeState(this.intakeState > 0 ? 0.0 : 1.0);
 	}
 
 	public void toggleOuttake() {
-		setIntakeState(this.intakeState == -1 ? 0 : -1);
+		setIntakeState(this.intakeState < 0 ? 0.0 : -1.0);
 	}
 
 	VoltageSensor voltage;
@@ -108,7 +113,7 @@ public class Shooter implements Subsystem {
 	}
 
 	private void updateRGB() {
-		if (!shooting && intakeState == 1) {
+		if (!shooting && intakeState != 0) {
 			rgbLight.setPosition(0.3); // orange
 			return;
 		}
@@ -148,10 +153,16 @@ public class Shooter implements Subsystem {
 	public void updateIntakeTransfer() {
 		if (!ActiveOpMode.opModeInInit()) {
 			if (shooting) {
-				gate.setPosition(0.65);
-				intake.setPower(1);
+				gate.setPosition(1);
+
+				// NEW LOGIC: Use intakeState if manually set, otherwise default to 0.75
+				if (intakeState != 0) {
+					intake.setPower(intakeState);
+				} else {
+					intake.setPower(1);
+				}
 			} else {
-				gate.setPosition(0.8);
+				gate.setPosition(0.75);
 				intake.setPower(intakeState);
 			}
 		}
@@ -178,10 +189,11 @@ public class Shooter implements Subsystem {
 		controller.setTarget(targetVelocity);
 
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
+		power *= 6.0/7.0;
 		if (ActiveOpMode.opModeInInit()) return;
 		flywheel.setPower(power);
-		flywheel2.setPower(power*8/9);
-//		flywheel.setPower(1);
+		flywheel2.setPower(power);
+
 		Telemetry telemetry = ActiveOpMode.telemetry();
 		if (flywheel.getMotor().isOverCurrent()) {
 			telemetry.addLine("Flywheel is over current!");
