@@ -189,7 +189,7 @@ public class Shooter implements Subsystem {
 		controller.setTarget(targetVelocity);
 
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
-		power *= 6.0/7.0;
+	//	power *= 6.0/7.0;// 67 removed
 		if (ActiveOpMode.opModeInInit()) return;
 		flywheel.setPower(power);
 		flywheel2.setPower(power);
