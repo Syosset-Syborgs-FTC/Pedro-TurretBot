@@ -27,9 +27,9 @@ import dev.nextftc.hardware.positionable.Positionable;
 
 @Configurable
 public class TurretAngleControl implements Subsystem {
-	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.03);
+	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.05);//old vals (1, 0.0000000001, 0.03);
 	// profile constraints
-	public static double MAX_VEL = (312.0 / 4.0 / 60.0) * 2.0 * Math.PI;
+	public static double MAX_VEL = (1150.0 / 4.0 / 60.0) * 2.0 * Math.PI;//switched this with new  motor
 	public static double MAX_ACCEL = MAX_VEL * 50; // reach max speed in 0.4s
 
 	public static final TurretAngleControl INSTANCE = new TurretAngleControl();
@@ -40,7 +40,7 @@ public class TurretAngleControl implements Subsystem {
 
 	public boolean followingAprilTag = false;
 	public double turretTargetAngle = 0;
-	public double scalar = 1.0 / 537.7 * Math.PI * (30.0 / 120.0) * 2.0;
+	public double scalar = 1.0 / 145.1 * Math.PI * (30.0 / 120.0) * 2.0;//switched this in code as well
 
 	ControlSystem turretControl = ControlSystem.builder()
 			.posPid(pidCoefficients)
@@ -95,7 +95,7 @@ public class TurretAngleControl implements Subsystem {
 		return turret.getCurrentPosition() * scalar;
 	}
 
-	public void setAnglerPosition(double pos) { angler.setPosition(Range.clip(pos, 0, 0.85)); }
+	public void setAnglerPosition(double pos) { angler.setPosition(Range.clip(pos, 0, 0.8)); }// from .85 to .8
 	public void offsetAnglerPosition(double pos) { setAnglerPosition(getAnglerPosition() + pos); }
 	public double getAnglerPosition() { return angler.getPosition(); }
 	public double getTurretAngle() { return turretTargetAngle; }

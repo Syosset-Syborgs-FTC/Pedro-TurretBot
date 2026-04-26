@@ -10,7 +10,7 @@ import dev.nextftc.ftc.ActiveOpMode;
 public class TurretVelocityCompensator implements FeedforwardElement {
 	public static TurretVelocityCompensator INSTANCE = new TurretVelocityCompensator();
 
-	public static double maxTurretSpeed = (1150.0 / 4.0 / 60.0) * 2.0 * Math.PI;// switch this 315 to 1000 when theres anew turret motor
+	public static double maxTurretSpeed = (1150 / 4.0 / 60.0) * 2.0 * Math.PI;// switch this 315 to 1000 when theres anew turret motor
 
 	public static double kV = 1.0 / maxTurretSpeed;
 	public static double kA = 0.01;

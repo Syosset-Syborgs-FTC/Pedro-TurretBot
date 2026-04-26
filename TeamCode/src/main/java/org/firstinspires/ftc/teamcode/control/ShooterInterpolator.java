@@ -7,7 +7,7 @@ public class ShooterInterpolator {
 	private CalibrationPoint[] points = {
 			new CalibrationPoint(
 					new Pose(-53, 54),
-					new ShooterState(1400, 0)
+					new ShooterState(1000, 0)
 			),
 			new CalibrationPoint(
 					new Pose(-48, 38),
@@ -35,7 +35,7 @@ public class ShooterInterpolator {
 			),
 			new CalibrationPoint(
 					new Pose(-22.07, -33.6),
-					new ShooterState(1250, 0.7)
+					new ShooterState(1000, 0.7)
 			),
 			new CalibrationPoint(
 					new Pose(0,0),
@@ -47,7 +47,19 @@ public class ShooterInterpolator {
 			),
 			new CalibrationPoint(
 					new Pose(-65, -36),
-					new ShooterState(1800, 0.75)
+					new ShooterState(2000, 0.75)
+			),
+			new CalibrationPoint(
+					new Pose(-11, -13),
+					new ShooterState(2000, 0.75)
+			),
+			new CalibrationPoint(
+					new Pose(-33, -27),
+					new ShooterState(1200, 0.6)
+			),
+			new CalibrationPoint(
+					new Pose(-25, -17),
+					new ShooterState(850, 0.7)
 			),
 	};
 	private final int kNeighbors;
