@@ -29,8 +29,8 @@ import dev.nextftc.hardware.positionable.Positionable;
 public class TurretAngleControl implements Subsystem {
 	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.05);//old vals (1, 0.0000000001, 0.03);
 	// profile constraints
-	public static double MAX_VEL = (1150.0 / 4.0 / 60.0) * 2.0 * Math.PI;//switched this with new  motor
-	public static double MAX_ACCEL = MAX_VEL * 50; // reach max speed in 0.4s
+	public static double MAX_VEL = (1150.0 / 4.0 / 60.0) * 20 * Math.PI;//switched this with new  motor
+	public static double MAX_ACCEL = MAX_VEL * .04; // reach max speed in 0.4s
 
 	public static final TurretAngleControl INSTANCE = new TurretAngleControl();
 

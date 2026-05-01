@@ -36,6 +36,7 @@ import dev.nextftc.ftc.components.LoopTimeComponent;
 @TeleOp(group = "Teleop")
 @Configurable
 public class SyborgsTeleop extends NextFTCOpMode {
+	RumbleHelper rbHelper; // Add this
 	double targetVelocity = 1550;
 	boolean flywheelEnabled = false;
 //	AnalogInput potentiometer;
@@ -55,14 +56,14 @@ public class SyborgsTeleop extends NextFTCOpMode {
 	boolean autoPowerAngle = false;
 	@Override
 	public void onInit() {
+		rbHelper = new RumbleHelper(gamepad1); // Initialize here
 		headingOffset = 0;
 		autoPowerAngle = false;
 		flywheelEnabled = false;
 		PhotonCore.enable();
 		Shooter.INSTANCE.setTargetVelocity(0);
 //		potentiometer = hardwareMap.get(AnalogInput.class, "pot");
-		gamepad1().rightBumper()
-				.whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
+		gamepad1().rightBumper().whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
 	}
 	public void onWaitForStart() {
 		telemetry.addData("Alliance (press right bumper to change)", Common.alliance);
@@ -76,7 +77,11 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		gamepad1().rightBumper().clear$bindings();
 		follower().startTeleopDrive(true);
 		gamepad1().options().whenBecomesTrue(() -> headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading());
-		gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
+		//gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
+		gamepad1().rightBumper().whenBecomesTrue(() -> {//ADDED
+			Shooter.INSTANCE.toggleIntake(); // Toggles the intake hardware
+			rbHelper.toggle();               // Toggles the vibration logic
+		});//ADDED
 		gamepad1().leftBumper().whenBecomesTrue(Shooter.INSTANCE::toggleOuttake);
 
 		gamepad1().leftTrigger().atLeast(0.5).whenBecomesTrue(() -> flywheelEnabled = !flywheelEnabled);
@@ -96,10 +101,13 @@ public class SyborgsTeleop extends NextFTCOpMode {
 //		gamepad2().dpadUp().whenBecomesTrue(() -> Ascent.INSTANCE.setAngle(Ascent.INSTANCE.getAngle().plus(Angle.fromDeg(15))));
 		gamepad2().rightBumper().whenBecomesTrue(() -> Common.alliance = Common.alliance.getOpposite());
 	}
+
+
 	double driveSpeedMultiplier = 1;
 	Vector drive = new Vector();
 	@Override
 	public void onUpdate() {
+		rbHelper.update(); // Add this line
 		drive.setOrthogonalComponents( -gamepad1.left_stick_y * driveSpeedMultiplier, -gamepad1.left_stick_x * driveSpeedMultiplier);
 		drive.rotateVector(-SensorFusion.INSTANCE.getRawPinpointHeading() + headingOffset);
 		follower().setTeleOpDrive(drive.getXComponent(), drive.getYComponent(), -gamepad1.right_stick_x * driveSpeedMultiplier, true);
@@ -110,9 +118,9 @@ public class SyborgsTeleop extends NextFTCOpMode {
 			}
 			ShooterState state = ShooterInterpolator.INSTANCE.getTargetState(currentPose);
 			TurretAngleControl.INSTANCE.setAnglerPosition(state.hoodAngle);
-			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 0);
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 1000);//to stop it to going direct 0
 		} else {
-			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 1000);
 		}
 		telemetry.addData("pose", follower().getPose());
 	}

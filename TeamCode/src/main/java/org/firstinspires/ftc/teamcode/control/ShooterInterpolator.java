@@ -7,12 +7,48 @@ public class ShooterInterpolator {
 	private CalibrationPoint[] points = {
 			new CalibrationPoint(
 					new Pose(-53, 54),
-					new ShooterState(1000, 0)
+					new ShooterState(1200, 0)
+			),
+
+
+			new CalibrationPoint(
+					new Pose(-32, -33),
+					new ShooterState(1150, 0.25)
 			),
 			new CalibrationPoint(
-					new Pose(-48, 38),
-					new ShooterState(1400, 0.02)
+					new Pose(-27, -22),
+					new ShooterState(1300, 0.3)
 			),
+			new CalibrationPoint(
+					new Pose(-24, -25),
+					new ShooterState(1325, 0.3)
+			),
+			new CalibrationPoint(
+					new Pose(-15, -19),
+					new ShooterState(1300, 0.65)
+			),
+			new CalibrationPoint(
+					new Pose(-12, -4.8),
+					new ShooterState(1400, 0.7)
+			),
+
+			new CalibrationPoint(
+					new Pose(-22, -22),
+					new ShooterState(1300, 0.6)
+			),
+			new CalibrationPoint(
+					new Pose(-3, 5),
+					new ShooterState(1950, 0.7)
+			),
+			new CalibrationPoint(
+					new Pose(-3, -15),
+					new ShooterState(1625, 0.55)
+			),
+			new CalibrationPoint(
+					new Pose(-32, .5),
+					new ShooterState(1550, 0.65)
+			),
+			/**
 			new CalibrationPoint(
 					new Pose(-3, 18),
 					new ShooterState(1530, 0.25)
@@ -61,6 +97,14 @@ public class ShooterInterpolator {
 					new Pose(-25, -17),
 					new ShooterState(850, 0.7)
 			),
+			new CalibrationPoint(
+					new Pose(-29, -17),
+					new ShooterState(1450, .6)
+			),
+			new CalibrationPoint(
+					new Pose(-28, -23),
+					new ShooterState(1300, .4)
+			),*/
 	};
 	private final int kNeighbors;
 	private final double power;
