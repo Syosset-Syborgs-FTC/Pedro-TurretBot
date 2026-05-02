@@ -10,10 +10,9 @@ import dev.nextftc.ftc.ActiveOpMode;
 public class TurretVelocityCompensator implements FeedforwardElement {
 	public static TurretVelocityCompensator INSTANCE = new TurretVelocityCompensator();
 
-	public static double maxTurretSpeed = (1150 / 4.0 / 60.0) * 2.0 * Math.PI;// switch this 315 to 1000 when theres anew turret motor
 
-	public static double kV = 1.0 / maxTurretSpeed;
-	public static double kA = 0.01;
+	public static double kV = 0.07;
+	public static double kA = 1;
 
 	@Override
 	public double calculate(@NonNull KineticState referenceState) {
@@ -35,12 +34,13 @@ public class TurretVelocityCompensator implements FeedforwardElement {
 		if ((nearNegStop && targetTotalVel < 0) || (nearPosStop && targetTotalVel > 0)) {
 			ff = 0;
 		}
-		if (Math.abs(headingVel) < 0.01) ff = 0;
+//		if (Math.abs(headingVel) < 0.001) ff = 0;
+
 
 		ActiveOpMode.telemetry().addData("Turret FF target vel", targetTotalVel);
 		ActiveOpMode.telemetry().addData("Turret near hard stop", nearNegStop || nearPosStop);
 
-		return 0;
+		return -ff;
 	}
 
 	@Override

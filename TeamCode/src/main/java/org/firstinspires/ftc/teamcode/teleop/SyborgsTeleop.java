@@ -5,15 +5,14 @@ import static dev.nextftc.ftc.Gamepads.gamepad1;
 
 import static dev.nextftc.ftc.Gamepads.gamepad2;
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.photon.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.teamcode.Common;
 import org.firstinspires.ftc.teamcode.components.PanelsPacketComponent;
+import org.firstinspires.ftc.teamcode.components.RumbleComponent;
 import org.firstinspires.ftc.teamcode.components.TelemetryComponent;
 import org.firstinspires.ftc.teamcode.control.ShooterInterpolator.ShooterState;
 import org.firstinspires.ftc.teamcode.control.ShooterInterpolator;
@@ -26,7 +25,6 @@ import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.core.units.Angle;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
@@ -36,7 +34,6 @@ import dev.nextftc.ftc.components.LoopTimeComponent;
 @TeleOp(group = "Teleop")
 @Configurable
 public class SyborgsTeleop extends NextFTCOpMode {
-	RumbleHelper rbHelper; // Add this
 	double targetVelocity = 1550;
 	boolean flywheelEnabled = false;
 //	AnalogInput potentiometer;
@@ -48,15 +45,15 @@ public class SyborgsTeleop extends NextFTCOpMode {
 				BindingsComponent.INSTANCE,
 				PanelsPacketComponent.INSTANCE,
 				BulkReadComponent.INSTANCE,
+				RumbleComponent.INSTANCE,
 				new SubsystemComponent(Shooter.INSTANCE, TurretAngleControl.INSTANCE
 //						, Ascent.INSTANCE
-						)
+				)
 		);
 	}
 	boolean autoPowerAngle = false;
 	@Override
 	public void onInit() {
-		rbHelper = new RumbleHelper(gamepad1); // Initialize here
 		headingOffset = 0;
 		autoPowerAngle = false;
 		flywheelEnabled = false;
@@ -78,10 +75,10 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		follower().startTeleopDrive(true);
 		gamepad1().options().whenBecomesTrue(() -> headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading());
 		//gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
-		gamepad1().rightBumper().whenBecomesTrue(() -> {//ADDED
-			Shooter.INSTANCE.toggleIntake(); // Toggles the intake hardware
-			rbHelper.toggle();               // Toggles the vibration logic
-		});//ADDED
+		gamepad1().rightBumper().whenBecomesTrue(() -> {
+			Shooter.INSTANCE.toggleIntake();
+			RumbleComponent.INSTANCE.toggle();
+		});
 		gamepad1().leftBumper().whenBecomesTrue(Shooter.INSTANCE::toggleOuttake);
 
 		gamepad1().leftTrigger().atLeast(0.5).whenBecomesTrue(() -> flywheelEnabled = !flywheelEnabled);
@@ -107,7 +104,6 @@ public class SyborgsTeleop extends NextFTCOpMode {
 	Vector drive = new Vector();
 	@Override
 	public void onUpdate() {
-		rbHelper.update(); // Add this line
 		drive.setOrthogonalComponents( -gamepad1.left_stick_y * driveSpeedMultiplier, -gamepad1.left_stick_x * driveSpeedMultiplier);
 		drive.rotateVector(-SensorFusion.INSTANCE.getRawPinpointHeading() + headingOffset);
 		follower().setTeleOpDrive(drive.getXComponent(), drive.getYComponent(), -gamepad1.right_stick_x * driveSpeedMultiplier, true);
@@ -118,9 +114,9 @@ public class SyborgsTeleop extends NextFTCOpMode {
 			}
 			ShooterState state = ShooterInterpolator.INSTANCE.getTargetState(currentPose);
 			TurretAngleControl.INSTANCE.setAnglerPosition(state.hoodAngle);
-			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 1000);//to stop it to going direct 0
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 0); //to stop it to going direct 0
 		} else {
-			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 1000);
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
 		}
 		telemetry.addData("pose", follower().getPose());
 	}

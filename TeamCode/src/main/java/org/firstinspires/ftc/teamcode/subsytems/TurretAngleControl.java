@@ -44,7 +44,7 @@ public class TurretAngleControl implements Subsystem {
 
 	ControlSystem turretControl = ControlSystem.builder()
 			.posPid(pidCoefficients)
-			.interpolator(new TrapezoidalInterpolator(MAX_VEL, MAX_ACCEL))
+//			.interpolator(new TrapezoidalInterpolator(MAX_VEL, MAX_ACCEL))
 			.feedforward(TurretVelocityCompensator.INSTANCE)
 			.build();
 

@@ -91,7 +91,6 @@ public class Shooter implements Subsystem {
 		return targetVelocity;
 	}
 
-	// CHANGED: Now accepts a double
 	public void setIntakeState(double state) {
 		this.intakeState = state;
 	}
@@ -155,7 +154,6 @@ public class Shooter implements Subsystem {
 			if (shooting) {
 				gate.setPosition(1);
 
-				// NEW LOGIC: Use intakeState if manually set, otherwise default to 0.75
 				if (intakeState != 0) {
 					intake.setPower(intakeState);
 				} else {
@@ -189,7 +187,6 @@ public class Shooter implements Subsystem {
 		controller.setTarget(targetVelocity);
 
 		double power = controller.update(currentVelocity, kF * targetVelocity / cachedVoltage);
-	//	power *= 6.0/7.0;// 67 removed
 		if (ActiveOpMode.opModeInInit()) return;
 		flywheel.setPower(power);
 		flywheel2.setPower(power);
