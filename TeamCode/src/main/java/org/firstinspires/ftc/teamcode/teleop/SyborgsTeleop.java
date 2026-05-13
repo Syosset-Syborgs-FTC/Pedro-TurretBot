@@ -92,6 +92,12 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		gamepad1().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.followingAprilTag = !TurretAngleControl.INSTANCE.followingAprilTag);
 		gamepad1().a().whenBecomesTrue(() -> driveSpeedMultiplier = driveSpeedMultiplier == 1 ? 0.35 : 1);
 		gamepad1().x().whenBecomesTrue(() -> autoPowerAngle = !autoPowerAngle);
+		gamepad1().b().whenBecomesTrue(() -> {
+			if (Common.alliance == Common.Alliance.Blue) SensorFusion.INSTANCE.setPose(new Pose(48, 80, Math.toRadians(100)));
+			else {
+				SensorFusion.INSTANCE.setPose(new Pose(69,-38, Math.toRadians(282)));
+			}
+		});
 
 		gamepad2().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));
 		gamepad2().a().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(-0.05));
