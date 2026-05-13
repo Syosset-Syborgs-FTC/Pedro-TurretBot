@@ -79,7 +79,11 @@ public class TurretAngleControl implements Subsystem {
 		turret.setPower(turretPower);
 
 		Vector alignTarget = new Vector();
-		alignTarget.setOrthogonalComponents(Common.alliance == Common.Alliance.Red? -62.5: -56.5, Common.alliance == Common.Alliance.Red ? 60 : -60);
+		if (Common.alliance == Common.Alliance.Red) {
+			alignTarget.setOrthogonalComponents(-62.5, 60);
+		} else {
+			alignTarget.setOrthogonalComponents(-58, -60);
+		}
 
 		if (followingAprilTag) {
 			double robotHeading = SensorFusion.INSTANCE.getPose().getHeading();

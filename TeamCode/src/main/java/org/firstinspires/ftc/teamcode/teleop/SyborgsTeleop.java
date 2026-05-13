@@ -114,7 +114,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 			}
 			ShooterState state = ShooterInterpolator.INSTANCE.getTargetState(currentPose);
 			TurretAngleControl.INSTANCE.setAnglerPosition(state.hoodAngle);
-			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 0); //to stop it to going direct 0
+			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? state.velocity : 1000); //to stop it to going direct 0
 		} else {
 			Shooter.INSTANCE.setTargetVelocity(flywheelEnabled? targetVelocity : 0);
 		}

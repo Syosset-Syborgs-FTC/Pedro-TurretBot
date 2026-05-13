@@ -9,102 +9,54 @@ public class ShooterInterpolator {
 					new Pose(-53, 54),
 					new ShooterState(1200, 0)
 			),
-
-
 			new CalibrationPoint(
 					new Pose(-32, -33),
-					new ShooterState(1150, 0.25)
+					new ShooterState(1600, 0.7)
 			),
 			new CalibrationPoint(
-					new Pose(-27, -22),
-					new ShooterState(1300, 0.3)
+					new Pose(-45, 38.4),
+					new ShooterState(1200, 0.0)
 			),
 			new CalibrationPoint(
-					new Pose(-24, -25),
-					new ShooterState(1325, 0.3)
+					new Pose(-30.8, 50.3),
+					new ShooterState(1270, 0.1)
 			),
 			new CalibrationPoint(
-					new Pose(-15, -19),
-					new ShooterState(1300, 0.65)
+					new Pose(-37.9, 42.4),
+					new ShooterState(1300, 0.1)
 			),
 			new CalibrationPoint(
-					new Pose(-12, -4.8),
-					new ShooterState(1400, 0.7)
+					new Pose(-22.4, 6.7),
+					new ShooterState(1450, 0.7)
 			),
-
 			new CalibrationPoint(
-					new Pose(-22, -22),
-					new ShooterState(1300, 0.6)
+					new Pose(-51.7, 35.6),
+					new ShooterState(1300, 0.2)
+			),
+			new CalibrationPoint(
+					new Pose(-22.4, 33.5),
+					new ShooterState(1400, 0.65)
 			),
 			new CalibrationPoint(
 					new Pose(-3, 5),
-					new ShooterState(1950, 0.7)
+					new ShooterState(1600, 0.7)
 			),
 			new CalibrationPoint(
-					new Pose(-3, -15),
-					new ShooterState(1625, 0.55)
+					new Pose(0.6, -3.4),
+					new ShooterState(1600, 0.65)
 			),
 			new CalibrationPoint(
-					new Pose(-32, .5),
-					new ShooterState(1550, 0.65)
-			),
-			/**
-			new CalibrationPoint(
-					new Pose(-3, 18),
-					new ShooterState(1530, 0.25)
+					new Pose(-10.3, -15.9),
+					new ShooterState(1635, 0.65)
 			),
 			new CalibrationPoint(
-					new Pose(-65, 10),
-					new ShooterState(1500, 0.25)
+					new Pose(-10.3, 15.4),
+					new ShooterState(1500, 0.7)
 			),
 			new CalibrationPoint(
-					new Pose(-65, -1),
-					new ShooterState(1550, 0.35)
-			),
-			new CalibrationPoint(
-					new Pose(-14.86, 10.06),
-					new ShooterState(1650, 0.45)
-			),
-			new CalibrationPoint(
-					new Pose(-32.5, -13.1),
-					new ShooterState(1620, 0.55)
-			),
-			new CalibrationPoint(
-					new Pose(-22.07, -33.6),
-					new ShooterState(1000, 0.7)
-			),
-			new CalibrationPoint(
-					new Pose(0,0),
-					new ShooterState(1700, 0.65)
-			),
-			new CalibrationPoint(
-					new Pose(-49, -23),
-					new ShooterState(1700, 0.65)
-			),
-			new CalibrationPoint(
-					new Pose(-65, -36),
-					new ShooterState(2000, 0.75)
-			),
-			new CalibrationPoint(
-					new Pose(-11, -13),
-					new ShooterState(2000, 0.75)
-			),
-			new CalibrationPoint(
-					new Pose(-33, -27),
-					new ShooterState(1200, 0.6)
-			),
-			new CalibrationPoint(
-					new Pose(-25, -17),
-					new ShooterState(850, 0.7)
-			),
-			new CalibrationPoint(
-					new Pose(-29, -17),
-					new ShooterState(1450, .6)
-			),
-			new CalibrationPoint(
-					new Pose(-28, -23),
-					new ShooterState(1300, .4)
-			),*/
+					new Pose(-50, 17.3),
+					new ShooterState(1400, 0.65)
+			)
 	};
 	private final int kNeighbors;
 	private final double power;
