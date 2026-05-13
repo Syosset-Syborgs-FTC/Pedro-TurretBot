@@ -66,9 +66,6 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		telemetry.addData("Alliance (press right bumper to change)", Common.alliance);
 	}
 	double headingOffset = 0;
-	public void resetFieldCentric() {
-		headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading();
-	}
 
 	@Override
 	public void onStartButtonPressed() {
@@ -76,7 +73,7 @@ public class SyborgsTeleop extends NextFTCOpMode {
 		TurretAngleControl.INSTANCE.setAnglerPosition(0.5);
 		gamepad1().rightBumper().clear$bindings();
 		follower().startTeleopDrive(true);
-		gamepad1().options().whenBecomesTrue(this::resetFieldCentric);
+		gamepad1().options().whenBecomesTrue(() -> headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading());
 		//gamepad1().rightBumper().whenBecomesTrue(Shooter.INSTANCE::toggleIntake);
 		gamepad1().rightBumper().whenBecomesTrue(() -> {
 			Shooter.INSTANCE.toggleIntake();
@@ -100,7 +97,10 @@ public class SyborgsTeleop extends NextFTCOpMode {
 			else {
 				SensorFusion.INSTANCE.setPose(new Pose(69,-38, Math.toRadians(282)));
 			}
-			resetFieldCentric();
+			headingOffset = SensorFusion.INSTANCE.getRawPinpointHeading() + Math.toRadians(180);
+			if (!TurretAngleControl.INSTANCE.followingAprilTag) {
+				TurretAngleControl.INSTANCE.setTurretAngle(-90);
+			}
 		});
 
 		gamepad2().y().whenBecomesTrue(() -> TurretAngleControl.INSTANCE.offsetAnglerPosition(0.05));

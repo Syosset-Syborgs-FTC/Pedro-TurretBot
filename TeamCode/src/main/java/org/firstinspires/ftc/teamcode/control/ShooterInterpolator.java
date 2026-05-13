@@ -4,6 +4,7 @@ import com.pedropathing.geometry.Pose;
 
 public class ShooterInterpolator {
 	public static ShooterInterpolator INSTANCE = new ShooterInterpolator(5, 2);
+
 	private CalibrationPoint[] points = {
 			new CalibrationPoint(
 					new Pose(-53, 54),
@@ -76,8 +77,17 @@ public class ShooterInterpolator {
 			new CalibrationPoint(
 					new Pose(48, 6),
 					new ShooterState(1770, 0.67)
+			),
+			new CalibrationPoint(
+					new Pose(-60, -39),
+					new ShooterState(1700, 0.7)
+			),
+			new CalibrationPoint(
+					new Pose(58.5, 0),
+					new ShooterState(1870, 0.7)
 			)
 	};
+
 	private final int kNeighbors;
 	private final double power;
 
