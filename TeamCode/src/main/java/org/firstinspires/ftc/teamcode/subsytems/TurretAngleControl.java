@@ -80,9 +80,9 @@ public class TurretAngleControl implements Subsystem {
 
 		Vector alignTarget = new Vector();
 		if (Common.alliance == Common.Alliance.Red) {
-			alignTarget.setOrthogonalComponents(-62.5, 72);
+			alignTarget.setOrthogonalComponents(-62.5, 69);
 		} else {
-			alignTarget.setOrthogonalComponents(-58, -72);
+			alignTarget.setOrthogonalComponents(-58, -69);
 		}
 
 		if (followingAprilTag) {

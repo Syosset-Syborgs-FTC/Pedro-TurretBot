@@ -152,7 +152,7 @@ public class Shooter implements Subsystem {
 	public void updateIntakeTransfer() {
 		if (!ActiveOpMode.opModeInInit()) {
 			if (shooting) {
-				gate.setPosition(1);
+				gate.setPosition(0.65);
 
 				if (intakeState != 0) {
 					intake.setPower(intakeState);
@@ -160,7 +160,7 @@ public class Shooter implements Subsystem {
 					intake.setPower(1);
 				}
 			} else {
-				gate.setPosition(0.75);
+				gate.setPosition(0.3);
 				intake.setPower(intakeState);
 			}
 		}

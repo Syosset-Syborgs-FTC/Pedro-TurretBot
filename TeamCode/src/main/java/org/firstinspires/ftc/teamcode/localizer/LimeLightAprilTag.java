@@ -42,8 +42,8 @@ public class LimeLightAprilTag implements Subsystem {
 
 
 	// robot centric inches
-	static double turretOffsetX = 0; // forward
-	static double turretOffsetY = 0; // left
+	static double turretOffsetX = -3; // forward
+	static double turretOffsetY = -1.5; // left
 
 	public static Pose flattenPose3DTo2d(Pose3D pose3D) {
 		Position p = pose3D.getPosition();
