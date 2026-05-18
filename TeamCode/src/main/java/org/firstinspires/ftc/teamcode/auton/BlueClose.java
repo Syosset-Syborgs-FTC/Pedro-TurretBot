@@ -43,7 +43,7 @@ public class BlueClose extends SyborgsAutonBase {
 		new SequentialGroup(
 //				new FollowPath(paths.Preload),
 				new WaitUntil(() -> Math.abs(Shooter.INSTANCE.getCurrentVelocity() - Shooter.INSTANCE.getTargetVelocity()) < 15),
-				new FollowPath(paths.LeaveZone),
+//				new FollowPath(paths.LeaveZone),
 				Shooter.INSTANCE.shootCommand()
 //				new InstantCommand(Shooter.INSTANCE::startIntake),
 //				new FollowPath(paths.GPP),

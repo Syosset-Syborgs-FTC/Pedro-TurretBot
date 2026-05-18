@@ -142,7 +142,7 @@ public class Shooter implements Subsystem {
 
 	public Command shootCommand() {
 		return new ParallelDeadlineGroup(
-				new Delay(3),
+				new Delay(2),
 				new InstantCommand(() -> setShooting(true))
 		).then(
 				new InstantCommand(() -> setShooting(false))
@@ -152,7 +152,7 @@ public class Shooter implements Subsystem {
 	public void updateIntakeTransfer() {
 		if (!ActiveOpMode.opModeInInit()) {
 			if (shooting) {
-				gate.setPosition(0.65);
+				gate.setPosition(0.35);
 
 				if (intakeState != 0) {
 					intake.setPower(intakeState);
@@ -160,7 +160,7 @@ public class Shooter implements Subsystem {
 					intake.setPower(1);
 				}
 			} else {
-				gate.setPosition(0.3);
+				gate.setPosition(0);
 				intake.setPower(intakeState);
 			}
 		}

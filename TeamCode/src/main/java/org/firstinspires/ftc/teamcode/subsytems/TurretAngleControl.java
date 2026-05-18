@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
+import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -29,6 +30,7 @@ import dev.nextftc.hardware.positionable.Positionable;
 public class TurretAngleControl implements Subsystem {
 	public static PIDCoefficients pidCoefficients = new PIDCoefficients(1, 0.0000000001, 0.05);//old vals (1, 0.0000000001, 0.03);
 	// profile constraints
+	public static BasicFeedforwardParameters feedforwardParameters = new BasicFeedforwardParameters(0, 0, 0);
 	public static double MAX_VEL = (1150.0 / 4.0 / 60.0) * 20 * Math.PI;//switched this with new  motor
 	public static double MAX_ACCEL = MAX_VEL * .04; // reach max speed in 0.4s
 
@@ -46,6 +48,7 @@ public class TurretAngleControl implements Subsystem {
 			.posPid(pidCoefficients)
 //			.interpolator(new TrapezoidalInterpolator(MAX_VEL, MAX_ACCEL))
 			.feedforward(TurretVelocityCompensator.INSTANCE)
+			.basicFF(feedforwardParameters)
 			.build();
 
 	@Override
@@ -80,9 +83,9 @@ public class TurretAngleControl implements Subsystem {
 
 		Vector alignTarget = new Vector();
 		if (Common.alliance == Common.Alliance.Red) {
-			alignTarget.setOrthogonalComponents(-62.5, 69);
+			alignTarget.setOrthogonalComponents(62.5, 69);
 		} else {
-			alignTarget.setOrthogonalComponents(-58, -69);
+			alignTarget.setOrthogonalComponents(-70, -73);
 		}
 
 		if (followingAprilTag) {

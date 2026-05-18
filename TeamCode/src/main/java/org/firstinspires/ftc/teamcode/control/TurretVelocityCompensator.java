@@ -34,7 +34,7 @@ public class TurretVelocityCompensator implements FeedforwardElement {
 		if ((nearNegStop && targetTotalVel < 0) || (nearPosStop && targetTotalVel > 0)) {
 			ff = 0;
 		}
-//		if (Math.abs(headingVel) < 0.001) ff = 0;
+		if (Math.abs(headingVel) < 0.001) ff = 0;
 
 
 		ActiveOpMode.telemetry().addData("Turret FF target vel", targetTotalVel);
