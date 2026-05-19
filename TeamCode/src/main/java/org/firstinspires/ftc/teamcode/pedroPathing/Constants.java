@@ -56,10 +56,10 @@ public class Constants {
 	public static Follower createFollower(HardwareMap hardwareMap) {
 		SensorFusion.INSTANCE.init(hardwareMap, pinpointConstants);
 
-		PinpointLocalizer tuningLocalizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
+//		PinpointLocalizer tuningLocalizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
 		return new FollowerBuilder(followerConstants, hardwareMap)
-//				.setLocalizer(SensorFusion.INSTANCE)
-				.setLocalizer(tuningLocalizer)
+				.setLocalizer(SensorFusion.INSTANCE)
+//				.setLocalizer(tuningLocalizer)
 				.mecanumDrivetrain(driveConstants)
 				.pathConstraints(pathConstraints)
 				.build();
