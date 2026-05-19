@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -22,11 +23,12 @@ public class Constants {
 	public static FollowerConstants followerConstants = new FollowerConstants()
 			.mass(12.7)
 			.forwardZeroPowerAcceleration(-33.1)
-			.lateralZeroPowerAcceleration(-67.8);
-//			.translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0.0, 0.02, 0.03))
-//			.headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.15, 0.02))
-//			.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.0000001, 0.6, 0.01))
-//			.centripetalScaling(0.00094);
+			.lateralZeroPowerAcceleration(-67.8)
+			.translationalPIDFCoefficients(new PIDFCoefficients(0.04, 0.0, 0, 0.01))
+			.headingPIDFCoefficients(new PIDFCoefficients(0.5, 0.02, 0.0, 0.03))
+			.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.009, 0, 0.0000001, 0.6, 0.0))
+			.centripetalScaling(0.00094)
+			.predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.11467282159115731, 0.0014326160024220227));
 
 
 	public static MecanumConstants driveConstants = new MecanumConstants()
@@ -43,7 +45,7 @@ public class Constants {
 			.yVelocity(51);
 	public static volatile double forwardPodY = -122.5;
 	public static volatile double strafePodX = -192;
-	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.5, 	1);
+	public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.75, 	1);
 
 	public static PinpointConstants pinpointConstants = new PinpointConstants()
 			.encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD)
@@ -54,10 +56,10 @@ public class Constants {
 	public static Follower createFollower(HardwareMap hardwareMap) {
 		SensorFusion.INSTANCE.init(hardwareMap, pinpointConstants);
 
-//		PinpointLocalizer tuningLocalizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
+		PinpointLocalizer tuningLocalizer = new PinpointLocalizer(hardwareMap, pinpointConstants, new Pose());
 		return new FollowerBuilder(followerConstants, hardwareMap)
-				.setLocalizer(SensorFusion.INSTANCE)
-//				.setLocalizer(tuningLocalizer)
+//				.setLocalizer(SensorFusion.INSTANCE)
+				.setLocalizer(tuningLocalizer)
 				.mecanumDrivetrain(driveConstants)
 				.pathConstraints(pathConstraints)
 				.build();

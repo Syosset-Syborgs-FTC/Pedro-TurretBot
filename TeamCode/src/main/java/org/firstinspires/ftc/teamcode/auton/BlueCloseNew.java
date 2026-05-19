@@ -33,7 +33,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 	@Override
 	public void onStartButtonPressed() {
 		Common.alliance = Common.Alliance.Blue;
-
+//		TurretAngleControl.INSTANCE.setTurretAngle(140);
 		TurretAngleControl.INSTANCE.followingAprilTag = true;
 		PathChain preload = follower().pathBuilder()
 				.addPath(
@@ -49,7 +49,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 						new BezierCurve(
 								new Pose(-10.528, -22.125),
 								new Pose(19.755, -19.709),
-								new Pose(15.099, -53.145)
+								new Pose(15.099, -51.145)
 						)
 				)
 				.setConstantHeadingInterpolation(Math.toRadians(270))
@@ -57,9 +57,9 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		PathChain initialReturn = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(15.099, -53.145),
-								new Pose(11.652, -35.193),
-								new Pose(2.306, -14.489)
+								new Pose(15.099, -51.145),
+								new Pose(13.652, -35.193),
+								new Pose(-1.306, -14.489)
 						)
 				)
 				.setConstantHeadingInterpolation(Math.toRadians(270))
@@ -67,12 +67,12 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		PathChain secondClear = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(2.306, -14.489),
-								new Pose(9.475, -36.120),
+								new Pose(-1.306, -14.489),
+								new Pose(11.475, -36.120),
 								new Pose(19.420, -62.726)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(230))
+				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(210))
 				.build();
 		PathChain secondReturn = follower().pathBuilder()
 				.addPath(
@@ -82,7 +82,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 								new Pose(1.879, -14.426)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(270))
 				.build();
 
 		Drawing.drawPath(preload, new Style("#00FFFF", "#00FFFF", 0.75));
@@ -91,16 +91,13 @@ public class BlueCloseNew extends SyborgsAutonBase {
 				new SequentialGroup(
 						new FollowPath(preload),
 						 Shooter.INSTANCE.shootCommand(),
-						new FollowPath(initialPGP),
 						new InstantCommand(Shooter.INSTANCE::startIntake),
-						new Delay(3),
-						new InstantCommand(Shooter.INSTANCE::stopIntake),
+						new FollowPath(initialPGP),
+						new Delay(1.5),
 						new FollowPath(initialReturn),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(secondClear),
-						new InstantCommand(Shooter.INSTANCE::startIntake),
-						new Delay(3),
-						new InstantCommand(Shooter.INSTANCE::stopIntake),
+						new Delay(2),
 						new FollowPath(secondReturn),
 						Shooter.INSTANCE.shootCommand()
 				),
