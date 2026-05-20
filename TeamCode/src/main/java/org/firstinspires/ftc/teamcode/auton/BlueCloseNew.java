@@ -34,7 +34,6 @@ public class BlueCloseNew extends SyborgsAutonBase {
 	public void onStartButtonPressed() {
 		Common.alliance = Common.Alliance.Blue;
 		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(47));
-//		TurretAngleControl.INSTANCE.followingAprilTag = true;
 		PathChain preload = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
@@ -49,7 +48,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 						new BezierCurve(
 								new Pose(-10.528, -22.125),
 								new Pose(19.755, -19.709),
-								new Pose(24.099, -60.145)
+								new Pose(24.099, -61.145)
 						)
 				)
 				.setConstantHeadingInterpolation(Math.toRadians(270))
@@ -57,43 +56,69 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		PathChain initialReturn = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(24.099, -60.145),
+								new Pose(24.099, -61.145),
 								new Pose(13.652, -35.193),
 								new Pose(-1.306, -17.489)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(180))
+				.setConstantHeadingInterpolation(Math.toRadians(270))
 				.build();
 		PathChain secondClear = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
 								new Pose(-1.306, -17.489),
 								new Pose(13.475, -36.120),
-								new Pose(16, -52)
+								new Pose(19, -57.5)
 						)
 				)
-				.setConstantHeadingInterpolation(Math.toRadians(180))
+				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(235))
+
 				.build();
-		PathChain secondClearIntake = follower().pathBuilder()
+		PathChain secondMove = follower().pathBuilder().addPath(
+						new BezierLine(
+								new Pose(19, -57.5),
+								new Pose(19.5, -57)
+						)
+				)
+				.setLinearHeadingInterpolation(Math.toRadians(235), Math.toRadians(235))
+				.setVelocityConstraint(10)
 				.addPath(
-						new BezierCurve(
-								new Pose(16, -52),
-								new Pose(22, -44.5),
-								new Pose(22.420, -58.726)
+						new BezierLine(
+								new Pose(19.5, -57),
+								new Pose(19, -57.5)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(210))
+				.setLinearHeadingInterpolation(Math.toRadians(235), Math.toRadians(235))
 				.build();
+
 		PathChain secondReturn = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(22.420, -58.726),
-//								new Pose(19.420, -62.726),
+								new Pose(19.420, -57.5),
 								new Pose(8.967, -35.121),
 								new Pose(-1.306, -17.489)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(270))
+				.build();
+		PathChain thirdPPG = follower().pathBuilder()
+				.addPath(
+						new BezierCurve(
+								new Pose(-1.306, -17.489),
+								new Pose(-12, -20),
+								new Pose(-11, -53)
+						)
+				)
+				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
+				.build();
+		PathChain thirdReturn = follower().pathBuilder()
+				.addPath(
+						new BezierLine(
+								new Pose(-11, -53),
+								new Pose(-1.306, -17.489)
+						)
+				)
+				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
 				.build();
 
 		Drawing.drawPath(preload, new Style("#00FFFF", "#00FFFF", 0.75));
@@ -101,23 +126,27 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		new ParallelDeadlineGroup(
 				new SequentialGroup(
 						new FollowPath(preload),
-						 Shooter.INSTANCE.shootCommand(),
+						Shooter.INSTANCE.shootCommand(),
 						new InstantCommand(Shooter.INSTANCE::startIntake),
 						new FollowPath(initialPGP),
 						new Delay(0.2),
 						new FollowPath(initialReturn),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(secondClear),
-						new Delay(0.01),
-						new FollowPath(secondClearIntake),
+						new Delay(0.05),
+						new FollowPath(secondMove),
 						new Delay(1),
 						new FollowPath(secondReturn),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(secondClear),
-						new Delay(0.01),
-						new FollowPath(secondClearIntake),
+						new Delay(0.05),
+						new FollowPath(secondMove),
 						new Delay(1),
 						new FollowPath(secondReturn),
+						Shooter.INSTANCE.shootCommand(),
+						new FollowPath(thirdPPG),
+						new Delay(0.2),
+						new FollowPath(thirdReturn),
 						Shooter.INSTANCE.shootCommand()
 				),
 				new LambdaCommand().setUpdate(() -> {
