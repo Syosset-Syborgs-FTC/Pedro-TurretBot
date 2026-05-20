@@ -68,7 +68,7 @@ public class ShooterInterpolator {
 				),
 				new CalibrationPoint(
 						new Pose(56, -4),
-						new ShooterState(1860, 0.7)
+						new ShooterState(1880, 0.7)
 				),
 				new CalibrationPoint(
 						new Pose(48, -6),

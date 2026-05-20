@@ -142,7 +142,7 @@ public class Shooter implements Subsystem {
 
 	public Command shootCommand() {
 		return new ParallelDeadlineGroup(
-				new Delay(2),
+				new Delay(1.3),
 				new InstantCommand(() -> setShooting(true))
 		).then(
 				new InstantCommand(() -> setShooting(false))

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.localizer.SensorFusion;
 @Configurable
 public class Constants {
 	public static FollowerConstants followerConstants = new FollowerConstants()
-			.mass(12.7)
+			.mass(15.7)
 			.forwardZeroPowerAcceleration(-33.1)
 			.lateralZeroPowerAcceleration(-67.8)
 			.translationalPIDFCoefficients(new PIDFCoefficients(0.04, 0.0, 0, 0.01))

@@ -110,6 +110,7 @@ public class TurretAngleControl implements Subsystem {
 	public void setTurretAngle(double angle) {
 		angle = wrapAngle(angle);
 		this.turretTargetAngle = angle;
+
 	}
 	public void offsetTurretAngle(double offset) {
 		setTurretAngle(getTurretAngle() + offset);
@@ -124,6 +125,6 @@ public class TurretAngleControl implements Subsystem {
 			result += 2 * Math.PI;
 		}
 
-		return result + min;
+		return Range.clip(result + min, Math.toRadians(-120), Math.toRadians(120));
 	}
 }
