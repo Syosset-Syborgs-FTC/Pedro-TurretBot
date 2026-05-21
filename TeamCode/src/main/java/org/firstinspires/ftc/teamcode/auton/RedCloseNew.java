@@ -24,72 +24,78 @@ import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
 
 @Autonomous(group = "Auton")
-public class BlueCloseNew extends SyborgsAutonBase {
+public class RedCloseNew extends SyborgsAutonBase {
 	@Override
 	public void onInit() {
 		super.onInit();
-		follower().setPose(new Pose(-52.070, -45.390, Math.toRadians(229.2)));
+		// Starting position kept unchanged
+		follower().setPose(new Pose(-52.070, 45.390, Math.toRadians(-229.2)));
 	}
 
 	@Override
 	public void onStartButtonPressed() {
-		Common.alliance = Common.Alliance.Blue;
-		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(47));
+		Common.alliance = Common.Alliance.Red;
+		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(-50));
+
 		PathChain preload = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
-								new Pose(-52.070, -45.390),
-								new Pose(-10.528, -22.125)
+								new Pose(-52.070, 45.390), // Starting position kept unchanged
+								new Pose(-15.528, 22.125)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(-230), Math.toRadians(-270))
 				.build();
+
 		PathChain initialPGP = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(-10.528, -22.125),
-								new Pose(22.755, -19.709),
-								new Pose(24.099, -61.145)
+								new Pose(-15.528, 22.125),
+								new Pose(17.755, 19.709),
+								new Pose(19.099, 61.145)
 						)
 				)
-				.setConstantHeadingInterpolation(Math.toRadians(270))
+				.setConstantHeadingInterpolation(Math.toRadians(-270))
 				.build();
+
 		PathChain initialReturn = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(24.099, -61.145),
-								new Pose(13.652, -35.193),
-								new Pose(-1.306, -17.489)
+								new Pose(19.099, 61.145),
+								new Pose(8.652, 35.193),
+								new Pose(-6.306, 17.489)
 						)
 				)
-				.setConstantHeadingInterpolation(Math.toRadians(270))
+				.setConstantHeadingInterpolation(Math.toRadians(-270))
 				.build();
+
 		PathChain secondClear = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(-1.306, -17.489),
-								new Pose(13.475, -36.120),
-								new Pose(19, -57.5)
+								new Pose(-6.306, 17.489),
+								new Pose(8.475, 36.120),
+								new Pose(14, 55.5)
 						)
 				)
 				.setNoDeceleration()
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(235))
+				.setLinearHeadingInterpolation(Math.toRadians(-270), Math.toRadians(-235))
 				.build();
+
 		PathChain secondMove = follower().pathBuilder().addPath(
 						new BezierLine(
-								new Pose(19, -57.5),
-								new Pose(19.5, -57)
+								new Pose(14, 55.5),
+								new Pose(14.5, 55)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(235), Math.toRadians(235))
+				.setLinearHeadingInterpolation(Math.toRadians(-235), Math.toRadians(-235))
 				.setVelocityConstraint(10)
 				.addPath(
 						new BezierLine(
-								new Pose(19.5, -57),
-								new Pose(19, -57.5)
+								new Pose(14.5, 55),
+								new Pose(14, 55.5)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(235), Math.toRadians(235))
+				.setLinearHeadingInterpolation(Math.toRadians(-235), Math.toRadians(-235))
 				.setTimeoutConstraint(100)
 				.setVelocityConstraint(15)
 				.setNoDeceleration()
@@ -98,39 +104,42 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		PathChain secondReturn = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(19.420, -57.5),
-								new Pose(8.967, -35.121),
-								new Pose(-1.306, -17.489)
+								new Pose(14.420, 55.5),
+								new Pose(3.967, 35.121),
+								new Pose(-6.306, 17.489)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(235), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(-235), Math.toRadians(-270))
 				.setVelocityConstraint(0.1)
 				.setBrakingStart(1.3)
 				.setGlobalDeceleration()
 				.build();
+
 		PathChain thirdPPG = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(-1.306, -17.489),
-								new Pose(-12, -20),
-								new Pose(-13, -53)
+								new Pose(-6.306, 17.489),
+								new Pose(-17, 20),
+								new Pose(-18, 53)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(-270), Math.toRadians(-270))
 				.setTValueConstraint(0.7)
 				.build();
+
 		PathChain thirdReturn = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
-								new Pose(-13, -53),
-								new Pose(-1.306, -17.489)
+								new Pose(-18, 53),
+								new Pose(-6.306, 17.489)
 						)
 				)
-				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
+				.setLinearHeadingInterpolation(Math.toRadians(-270), Math.toRadians(-270))
 				.build();
 
-		Drawing.drawPath(preload, new Style("#00FFFF", "#00FFFF", 0.75));
+		Drawing.drawPath(preload, new Style("#FF0000", "#FF0000", 0.75));
 		Drawing.sendPacket();
+
 		new ParallelDeadlineGroup(
 				new SequentialGroup(
 						new FollowPath(preload),

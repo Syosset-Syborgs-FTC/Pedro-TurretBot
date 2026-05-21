@@ -34,10 +34,9 @@ public class Shooter implements Subsystem {
 	ServoEx gate = new ServoEx("ga");
 	ServoEx rgbLight = new ServoEx("rgb");
 
-	double targetVelocity = 0;
+	double 	targetVelocity = 0;
 	boolean autoAlignIndicator = false;
 
-	// CHANGED: Changed to double to support fractional power (e.g. 0.5)
 	double intakeState = 0;
 	boolean shooting = false;
 
@@ -157,7 +156,7 @@ public class Shooter implements Subsystem {
 				if (intakeState != 0) {
 					intake.setPower(intakeState);
 				} else {
-					intake.setPower(1);
+					intake.setPower(targetVelocity > 1750 ? 0.7 : 1);
 				}
 			} else {
 				gate.setPosition(0);
