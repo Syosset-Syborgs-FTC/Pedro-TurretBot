@@ -77,7 +77,7 @@ public class LimeLightAprilTag implements Subsystem {
 	public Optional<VisionResult> localizeRobotMT2() {
 		LLResult result = limelight.getLatestResult();
 		if (result.isValid()) {
-			return Optional.of(new VisionResult(flattenPose3DTo2d(result.getBotpose_MT2()), result.getControlHubTimeStampNanos(), result.getTimestamp()));
+			return Optional.of(new VisionResult(flattenPose3DTo2d(result.getBotpose_MT2()), result.getControlHubTimeStampNanos(), result.getTimestamp(), result.getStddevMt2()));
 		}
 		return Optional.empty();
 	}
@@ -103,7 +103,7 @@ public class LimeLightAprilTag implements Subsystem {
 			ActiveOpMode.telemetry().addData("z", pose.getPosition().z);
 			ActiveOpMode.telemetry().addData("MT1 std dev", Arrays.toString(result.getStddevMt1()));
 			if (pose.getPosition().z > 0.1) return Optional.empty();
-			return Optional.of(new VisionResult(flattenPose3DTo2d(pose), result.getControlHubTimeStampNanos(), result.getTimestamp()));
+			return Optional.of(new VisionResult(flattenPose3DTo2d(pose), result.getControlHubTimeStampNanos(), result.getTimestamp(), result.getStddevMt1()));
 		}
 		return Optional.empty();
 	}
@@ -115,11 +115,13 @@ public class LimeLightAprilTag implements Subsystem {
 		public Pose pose;
 		public long timestamp;
 		public double llTimestamp;
+		public double[] stddev;
 
-		public VisionResult(Pose pose, long timestamp, double llTimestamp) {
+		public VisionResult(Pose pose, long timestamp, double llTimestamp, double[] stddev) {
 			this.pose = pose;
 			this.timestamp = timestamp;
 			this.llTimestamp = llTimestamp;
+			this.stddev = stddev;
 		}
 	}
 }

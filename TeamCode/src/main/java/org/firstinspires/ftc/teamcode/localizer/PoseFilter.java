@@ -26,8 +26,10 @@ public class PoseFilter {
 
 
 	// q: process noise covariance how fast odometry drifts
-	private final double Q_POS = 0.002;
-	private final double Q_HEAD = 0.001;
+	private double Q_X = 0.002;
+
+	private double Q_Y = 0.002;
+	private double Q_HEAD = 0.001;
 
 	// r: measurement noisy covariance
 	private final double R_POS = 0.5; // inch^2 variance
@@ -58,8 +60,8 @@ public class PoseFilter {
 		long cleanupThreshold = timestampNs - (HISTORY_RETENTION_MS * 1_000_000);
 		odomHistory.headMap(cleanupThreshold).clear();
 
-		covX += Q_POS;
-		covY += Q_POS;
+		covX += Q_X;
+		covY += Q_Y;
 		covH += Q_HEAD;
 	}
 	public void setPose(Pose rawPinpointPose, Pose desiredWorldPose) {
@@ -70,7 +72,7 @@ public class PoseFilter {
 		this.covH = R_HEAD;
 	}
 	double pastVisionTimestamp = 0;
-	public void updateVision(Pose visionPose, long timestampNs, double llTs) {
+	public void updateVision(Pose visionPose, long timestampNs, double llTs, double[] stddev) {
 		ActiveOpMode.telemetry().addData("llts", llTs);
 		ActiveOpMode.telemetry().addData("past ts", pastVisionTimestamp);
 		if (llTs == pastVisionTimestamp) {

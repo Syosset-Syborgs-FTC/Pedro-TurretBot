@@ -82,9 +82,9 @@ public class SensorFusion implements Localizer {
 				.localizeRobotMT1();
 		ActiveOpMode.telemetry().addData("updated", true);
 		mt1Result
-				.ifPresent(pair -> {
-					cachedCameraPose = Optional.of(pair.pose);
-					filter.updateVision(LimeLightAprilTag.INSTANCE.calculateRobotPoseFromCameraPose(pair.pose), pair.timestamp, pair.llTimestamp);
+				.ifPresent(visionResult -> {
+					cachedCameraPose = Optional.of(visionResult.pose);
+					filter.updateVision(LimeLightAprilTag.INSTANCE.calculateRobotPoseFromCameraPose(visionResult.pose), visionResult.timestamp, visionResult.llTimestamp, visionResult.stddev);
 				});
 		cachedMT1Pose = mt1Result.map(p -> p.pose);
 		cachedMT2Pose = LimeLightAprilTag.INSTANCE.localizeRobotMT2().map(p -> p.pose);
