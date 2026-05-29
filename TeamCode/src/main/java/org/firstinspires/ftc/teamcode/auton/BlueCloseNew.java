@@ -34,7 +34,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 	@Override
 	public void onStartButtonPressed() {
 		Common.alliance = Common.Alliance.Blue;
-		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(47));
+		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(50));
 		PathChain preload = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
@@ -49,7 +49,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 						new BezierCurve(
 								new Pose(-10.528, -22.125),
 								new Pose(22.755, -19.709),
-								new Pose(24.099, -61.145)
+								new Pose(24.099, -59.145)
 						)
 				)
 				.setConstantHeadingInterpolation(Math.toRadians(270))
@@ -68,7 +68,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 				.addPath(
 						new BezierCurve(
 								new Pose(-1.306, -17.489),
-								new Pose(13.475, -36.120),
+								new Pose(19.475, -36.120),
 								new Pose(19, -57.5)
 						)
 				)
@@ -112,8 +112,8 @@ public class BlueCloseNew extends SyborgsAutonBase {
 				.addPath(
 						new BezierCurve(
 								new Pose(-1.306, -17.489),
-								new Pose(-12, -20),
-								new Pose(-13, -53)
+								new Pose(-9, -20),
+								new Pose(-9, -53)
 						)
 				)
 				.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
@@ -122,7 +122,7 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		PathChain thirdReturn = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
-								new Pose(-13, -53),
+								new Pose(-9, -53),
 								new Pose(-1.306, -17.489)
 						)
 				)
@@ -133,28 +133,28 @@ public class BlueCloseNew extends SyborgsAutonBase {
 		Drawing.sendPacket();
 		new ParallelDeadlineGroup(
 				new SequentialGroup(
-						new FollowPath(preload),
+						new FollowPath(preload, false),
 						Shooter.INSTANCE.shootCommand(),
 						new InstantCommand(Shooter.INSTANCE::startIntake),
 						new FollowPath(initialPGP),
-						new Delay(0.2),
+//						new Delay(0.2),
 						new FollowPath(initialReturn),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(secondClear),
-						new Delay(1),
+						new Delay(0.5),
 						new FollowPath(secondMove),
-						new Delay(1),
+						new Delay(0.5),
 						new InstantCommand(() -> telemetry.addLine("return done")),
-						new FollowPath(secondReturn),
+						new FollowPath(secondReturn, false),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(secondClear),
-						new Delay(1),
+						new Delay(0.5),
 						new FollowPath(secondMove),
-						new Delay(1),
-						new FollowPath(secondReturn),
+						new Delay(0.5),
+						new FollowPath(secondReturn, false),
 						Shooter.INSTANCE.shootCommand(),
 						new FollowPath(thirdPPG),
-						new Delay(0.2),
+//						new Delay(0.2),
 						new FollowPath(thirdReturn),
 						Shooter.INSTANCE.shootCommand(),
 						new ParallelGroup(
