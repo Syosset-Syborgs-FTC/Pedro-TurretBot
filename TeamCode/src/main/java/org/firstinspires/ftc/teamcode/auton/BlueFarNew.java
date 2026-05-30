@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsytems.Shooter;
 import org.firstinspires.ftc.teamcode.subsytems.TurretAngleControl;
 
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -22,23 +23,23 @@ public class BlueFarNew extends SyborgsAutonBase {
 	@Override
 	public void onInit() {
 		super.onInit();
-		follower().setPose(new Pose(64.000, -12.000, Math.toRadians(180)));
+		follower().setPose(new Pose(65.44, -17.69, Math.toRadians(180)));
 	}
 
 	@Override
 	public void onStartButtonPressed() {
 		Common.alliance = Common.Alliance.Blue;
-		Shooter.INSTANCE.setTargetVelocity(1810);
+		Shooter.INSTANCE.setTargetVelocity(1850);
 
 		TurretAngleControl.INSTANCE.setAnglerPosition(0.7);
-		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(-33));
+		TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(-22));
 
 		PathChain initialGPP = follower().pathBuilder()
 				.addPath(
 						new BezierCurve(
-								new Pose(61.238, -22.498),
-								new Pose(36.559, -24.742),
-								new Pose(36.287, -38.105)
+								new Pose(65.44, -17.69),
+								new Pose(41.559, -22.742),
+								new Pose(41.287, -24.105)
 						)
 				)
 				.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(270))
@@ -46,8 +47,8 @@ public class BlueFarNew extends SyborgsAutonBase {
 		PathChain initialGPPIntake = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
-								new Pose(36.287, -38.105),
-								new Pose(36.287, -56.105)
+								new Pose(41.287, -24.105),
+								new Pose(41.287, -63.105)
 						)
 				)
 				.setConstantHeadingInterpolation(Math.toRadians(270))
@@ -56,7 +57,7 @@ public class BlueFarNew extends SyborgsAutonBase {
 		PathChain initialReturn = follower().pathBuilder()
 				.addPath(
 						new BezierLine(
-								new Pose(36.287, -56.105),
+								new Pose(36.287, -63.105),
 								new Pose(61.469, -22.895)
 						)
 				)
@@ -131,18 +132,26 @@ public class BlueFarNew extends SyborgsAutonBase {
 		new SequentialGroup(
 				new Delay(3),
 				Shooter.INSTANCE.shootCommand(),
+				new InstantCommand(Shooter.INSTANCE::startIntake),
 				new FollowPath(initialGPP),
-				new FollowPath(initialGPPIntake),
+				new ParallelRaceGroup(
+						new FollowPath(initialGPPIntake),
+						new Delay(0.8)
+						),
 				new Delay(0.2),
-				new FollowPath(initialReturn),
+				new InstantCommand(() -> TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(69.5))),
+				new ParallelRaceGroup(
+						new FollowPath(initialReturn),
+						new Delay(2)
+				),
 				Shooter.INSTANCE.shootCommand(),
-				new InstantCommand(() -> TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(70))),
-				new FollowPath(secondAlign),
-				new FollowPath(secondIntake, true, 0.4),
-				new FollowPath(secondMove),
-				new FollowPath(secondReturn),
-				Shooter.INSTANCE.shootCommand(),
-				new InstantCommand(() -> TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(-30))),
+				new Delay(1),
+//				new InstantCommand(() -> TurretAngleControl.INSTANCE.setTurretAngle(Math.toRadians(-70))),
+//				new FollowPath(secondAlign),
+//				new FollowPath(secondIntake, true, 0.4),
+//				new FollowPath(secondMove),
+//				new FollowPath(secondReturn),
+//				Shooter.INSTANCE.shootCommand(),
 				new FollowPath(thirdScoop),
 				new FollowPath(thirdReturn),
 				Shooter.INSTANCE.shootCommand(),
